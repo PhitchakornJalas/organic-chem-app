@@ -86,22 +86,129 @@ body {
     filter: brightness(1.1);
 }
 
-/* ส่วนของ Search Input */
-input[type="text"] {
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid #90e0ef;
-    border-radius: 50px;
-    padding: 12px 25px;
-    outline: none;
-    color: var(--text-color);
-    transition: border 0.3s;
+/* Container ของช่องค้นหา */
+.search-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px !important; /* ลด padding ลงนิดหน่อยสำหรับมือถือ */
+    background: rgba(255, 255, 255, 0.8);
 }
 
-input[type="text"]:focus {
-    border-color: var(--primary-color);
+/* จัดเลย์เอาต์ภายใน Form */
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* ระยะห่างระหว่างช่องพิมพ์กับปุ่ม */
+    width: 100%;
+}
+
+/* ปรับช่อง Input ให้ยืดเต็มพื้นที่ที่เหลือ */
+.search-input {
+    flex: 1; /* สำคัญ: ทำให้ช่อง input ยาวที่สุดเท่าที่จะทำได้โดยไม่เบียดปุ่ม */
+    min-width: 0; /* ป้องกัน input ดันปุ่มหลุดจอ */
+    border-radius: 50px;
+    border: 2px solid #90e0ef;
+    padding: 12px 20px;
+    outline: none;
+}
+
+/* ปรับแต่งปุ่มค้นหาให้สวยและคงที่ */
+.btn-search {
+    background: linear-gradient(135deg, #48cae4, #0077b6);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap; /* ป้องกันตัวอักษร "ค้นหา" ตัดบรรทัด */
+    box-shadow: 0 4px 15px rgba(0, 119, 182, 0.2);
+    transition: all 0.3s;
+}
+
+/* สำหรับหน้าจอมือถือที่แคบมากๆ (ไม่เกิน 480px) */
+@media (max-width: 480px) {
+    .search-form {
+        flex-direction: column; /* เปลี่ยนจากเรียงแถวเป็นเรียงบนล่าง */
+        border-radius: 20px;
+    }
+    .btn-search {
+        width: 100%; /* ปุ่มยาวเต็มจอในมือถือ */
+    }
+    .search-input {
+        width: 100%;
+    }
 }
 
 h1.title-main {
     color: var(--primary-color);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Container สำหรับรวมการ์ดทั้งหมด */
+.groups-grid {
+    display: grid;
+    /* แบ่งเป็น 3 คอลัมน์บนจอใหญ่, 2 บนแท็บเล็ต, 1 บนมือถือ */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 2rem;
+}
+
+/* ปรับการ์ดเป็นแนวตั้ง (Vertical Card) */
+.card-vertical {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    border-radius: 25px;
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column; /* เรียงจากบนลงล่าง */
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.card-vertical:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--glass-shadow);
+}
+
+/* ส่วนรูปภาพอยู่ด้านบน */
+.card-top-image {
+    width: 100%;
+    height: 180px;
+    background: rgba(255, 255, 255, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.card-top-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* ส่วนเนื้อหาอยู่ด้านล่าง */
+.card-body {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-body h2 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.formula-tag {
+    background: var(--accent-color);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-top: 5px;
 }

@@ -13,7 +13,21 @@ driver = GraphDatabase.driver(uri, auth=(user, password))
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    with driver.session() as session:
+        query = """
+        MATCH (f:FunctionalGroup) 
+        RETURN f.name_en AS name_en, 
+               f.name_th AS name_th, 
+               f.formula AS formula,
+               f.molecularFormula AS molecularFormula, 
+               f.groupName AS groupName, 
+               f.image AS image
+        ORDER BY f.id ASC
+        """
+        results = session.run(query)
+        functional_groups = [record.data() for record in results]
+        
+    return render_template('index.html', functional_groups=functional_groups)
 
 if __name__ == '__main__':
     # host='0.0.0.0' สำคัญมากเพื่อให้เข้าถึงจากนอก Container ได้
