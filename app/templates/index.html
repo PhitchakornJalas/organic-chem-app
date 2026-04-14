@@ -48,12 +48,12 @@
 
             <div style="margin-top: auto;">
               <small>สูตรทั่วไป:</small>
-              <div><span class="formula-tag">{{ f.formula }}</span></div>
+              <div><span class="formula-tag"><span class="formula-render">{{ f.formula }}</span></span></div>
             </div>
 
             <div style="margin-top: auto;">
               <small>สูตรโมเลกุล:</small>
-              <div><span class="formula-tag">{{ f.molecularFormula }}</span></div>
+              <div><span class="formula-tag"><span class="formula-render">{{ f.molecularFormula }}</span></span></div>
             </div>
           </div>
         </div>
@@ -113,4 +113,5 @@
   </div>
 </body>
 
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </html>
