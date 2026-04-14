@@ -1,0 +1,33 @@
+# --- Database & Docker ---
+neo4j/data/
+neo4j/logs/
+neo4j/transactions/
+neo4j/import/
+# ไม่เก็บ plugins ที่โหลดมาเอง (ยกเว้นคุณอยากแชร์ให้เพื่อน)
+neo4j/plugins/*.jar
+
+# --- Secrets ---
+.env
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+env/
+dist/
+build/
+
+# --- Operating System ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# --- Docker ---
+.docker/

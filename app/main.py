@@ -1,0 +1,20 @@
+import os
+from flask import Flask, render_template, request
+from neo4j import GraphDatabase
+
+app = Flask(__name__)
+
+# ดึงค่าจาก environment ที่ตั้งไว้ใน docker-compose
+uri = os.getenv("NEO4J_URI", "bolt://neo4j:7687") 
+user = os.getenv("NEO4J_USER")
+password = os.getenv("NEO4J_PASSWORD")
+
+driver = GraphDatabase.driver(uri, auth=(user, password))
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    # host='0.0.0.0' สำคัญมากเพื่อให้เข้าถึงจากนอก Container ได้
+    app.run(host='0.0.0.0', port=5000, debug=True)
