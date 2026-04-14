@@ -8,10 +8,11 @@ function applySubscripts() {
   formulas.forEach(el => {
     let text = el.innerText;
 
-    // Regex ตัวนี้จะมองหา:
-    // 1. ตัวอักษรธาตุ ([A-Z][a-z]?)
-    // 2. ตามด้วยกลุ่มของ ตัวเลข, n, +, - ที่ผสมกันอยู่ ([0-9n+\-]+)
-    let formatted = text.replace(/([A-Z][a-z]?)([0-9n+\-]+)/g, '$1<sub>$2</sub>');
+    // Regex ตัวนี้จะแบ่งงานเป็น 2 ส่วน:
+    // 1. ([A-Z][a-z]?) : จับตัวธาตุ (C, H, O)
+    // 2. ([0-9n]+(?:[+\-][0-9n]+)*) : จับตัวเลขหรือ n 
+    //    และจะจับ + หรือ - ก็ต่อเมื่อมีตัวเลข/n ตามหลังต่อเท่านั้น
+    let formatted = text.replace(/([A-Z][a-z]?)([0-9n]+(?:[+\-][0-9n]+)*)/g, '$1<sub>$2</sub>');
 
     el.innerHTML = formatted;
   });
