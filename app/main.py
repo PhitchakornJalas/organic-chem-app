@@ -29,6 +29,24 @@ def index():
         
     return render_template('index.html', functional_groups=functional_groups)
 
+@app.route('/details/<group_name>')
+def details(group_name):
+    with driver.session() as session:
+        query = """
+        MATCH (f:FunctionalGroup {name_en: $name})
+        OPTIONAL MATCH (i:Items)-[:FUNCTIONALGROUP_IS]->(f)
+        RETURN f, collect(i) AS examples
+        """
+        result = session.run(query, name=group_name).single()
+        
+        if not result:
+            return "ไม่พบข้อมูล", 404
+            
+        group_data = result['f']
+        examples = result['examples']
+        
+    return render_template('details.html', group=group_data, examples=examples)
+
 if __name__ == '__main__':
     # host='0.0.0.0' สำคัญมากเพื่อให้เข้าถึงจากนอก Container ได้
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organic Chem Explorer</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/details.css') }}">
+</head>
+
+<body>
+  <div class="app-wrapper">
+    <div class="container detail-container">
+      <div class="navigation-area">
+        <a href="{{ url_for('index') }}" class="btn-back">
+          <span class="icon">←</span> ย้อนกลับหน้าแรก
+        </a>
+      </div>
+
+      <div class="detail-card main-info-card">
+        <div class="detail-header-content">
+          <div class="info-left">
+            <h1 class="title-th">{{ group.name_th }}</h1>
+            <h3 class="title-en">{{ group.name_en }}</h3>
+            <div class="data-badge">
+              <small>หมู่ฟังก์ชัน:</small>
+              <p>{{ group.groupName }}</p>
+            </div>
+          </div>
+
+          <div class="info-center">
+            <div class="main-structure-circle">
+              <img src="{{ url_for('static', filename='images/functionalGroup/' + group.image) }}" alt="Structure">
+            </div>
+          </div>
+
+          <div class="info-right">
+            <div class="data-badge">
+              <small>สูตรทั่วไป:</small>
+              <p class="formula-render">{{ group.formula }}</p>
+            </div>
+            <div class="data-badge accent">
+              <small>สูตรโมเลกุล:</small>
+              <p class="formula-render">{{ group.molecularFormula }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-title">✨ สิ่งของในชีวิตประจำวัน</h3>
+
+      <div class="example-slider-container">
+        <div class="example-slider-track">
+          {% for item in examples %}
+          <div class="example-card">
+            <div class="card-img-box">
+              <img src="{{ url_for('static', filename='images/items/' + item.image) }}" alt="{{ item.IUPAC }}">
+            </div>
+            <div class="card-content">
+              <h4 class="item-title">{{ item.name_th }}</h4>
+              <h3 class="item-title">{{ item.IUPAC }}</h3>
+              <small>สูตรโมเลกุล: <span class="formula-render item-formula">{{ item.molecularFormula }}</span></small>
+              <!-- <p class="item-usage">{{ item.usage }}</p> -->
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</html>

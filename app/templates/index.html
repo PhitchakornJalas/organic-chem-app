@@ -8,6 +8,7 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 
 <body>
@@ -26,37 +27,40 @@
       </div>
     </section>
 
-    <main style="grid-column: 1 / -1; margin-top: 2rem;">
+    <a style="grid-column: 1 / -1; margin-top: 2rem;">
+
 
       <div class="groups-grid">
         {% for f in functional_groups %}
-        <div class="card-vertical">
-          <div class="card-top-image">
-            <img src="{{ url_for('static', filename='images/functionalGroup/' + f.image) }}" alt="{{ f.name_en }}">
+        <a href="{{ url_for('details', group_name=f.name_en) }}" style="text-decoration: none; color: inherit;">
+          <div class="card-vertical">
+            <div class="card-top-image">
+              <img src="{{ url_for('static', filename='images/functionalGroup/' + f.image) }}" alt="{{ f.name_en }}">
+            </div>
+
+            <div class="card-body">
+              <h2>{{ f.name_th }}</h2>
+              <p style="font-size: 0.9rem; color: #555; margin-bottom: 10px;">
+                {{ f.name_en }}
+              </p>
+
+              <div style="margin-bottom: 15px;">
+                <small>หมู่ฟังก์ชัน:</small>
+                <div style="font-weight: bold;">{{ f.groupName }}</div>
+              </div>
+
+              <div style="margin-top: auto;">
+                <small>สูตรทั่วไป:</small>
+                <div><span class="formula-tag"><span class="formula-render">{{ f.formula }}</span></span></div>
+              </div>
+
+              <div style="margin-top: auto;">
+                <small>สูตรโมเลกุล:</small>
+                <div><span class="formula-tag"><span class="formula-render">{{ f.molecularFormula }}</span></span></div>
+              </div>
+            </div>
           </div>
-
-          <div class="card-body">
-            <h2>{{ f.name_th }}</h2>
-            <p style="font-size: 0.9rem; color: #555; margin-bottom: 10px;">
-              {{ f.name_en }}
-            </p>
-
-            <div style="margin-bottom: 15px;">
-              <small>หมู่ฟังก์ชัน:</small>
-              <div style="font-weight: bold;">{{ f.groupName }}</div>
-            </div>
-
-            <div style="margin-top: auto;">
-              <small>สูตรทั่วไป:</small>
-              <div><span class="formula-tag"><span class="formula-render">{{ f.formula }}</span></span></div>
-            </div>
-
-            <div style="margin-top: auto;">
-              <small>สูตรโมเลกุล:</small>
-              <div><span class="formula-tag"><span class="formula-render">{{ f.molecularFormula }}</span></span></div>
-            </div>
-          </div>
-        </div>
+        </a>
         {% endfor %}
       </div>
 
@@ -109,9 +113,10 @@
             (Admin) →</a>
         </div>
       </div>
-    </main>
+      </main>
   </div>
 </body>
 
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
 </html>
