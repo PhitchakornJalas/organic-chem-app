@@ -8,11 +8,15 @@ function applySubscripts() {
   formulas.forEach(el => {
     let text = el.innerText;
 
-    // Regex ตัวนี้จะแบ่งงานเป็น 2 ส่วน:
-    // 1. ([A-Z][a-z]?) : จับตัวธาตุ (C, H, O)
-    // 2. ([0-9n]+(?:[+\-][0-9n]+)*) : จับตัวเลขหรือ n 
-    //    และจะจับ + หรือ - ก็ต่อเมื่อมีตัวเลข/n ตามหลังต่อเท่านั้น
-    let formatted = text.replace(/([A-Z][a-z]?)([0-9n]+(?:[+\-][0-9n]+)*)/g, '$1<sub>$2</sub>');
+    // ปรับ Regex ใหม่:
+    // (?:[A-Z][a-z]?|\)) : ส่วนแรกให้จับ "ธาตุ" หรือ "วงเล็บปิด )"
+    // ([0-9n]+(?:[+\-][0-9n]+)*) : ส่วนที่สองจับตัวเลข/n/เครื่องหมาย เหมือนเดิม
+    let formatted = text.replace(/(?:([A-Z][a-z]?)|(\)))([0-9n]+(?:[+\-][0-9n]+)*)/g, function(match, element, bracket, subscript) {
+        // ถ้าเจอธาตุ ให้เอาธาตุมาต่อด้วยตัวห้อย
+        // ถ้าเจอวงเล็บ ให้เอาวงเล็บมาต่อด้วยตัวห้อย
+        let prefix = element ? element : bracket;
+        return prefix + '<sub>' + subscript + '</sub>';
+    });
 
     el.innerHTML = formatted;
   });

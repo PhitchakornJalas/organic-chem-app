@@ -10,12 +10,38 @@
 
 .detail-header-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* เปลี่ยนเป็นกึ่งกลาง */
     align-items: center;
     gap: 20px;
+    width: 100%;
 }
 
-.info-center { flex: 1.5; display: flex; justify-content: center; }
+/* บังคับให้ทั้ง 3 ส่วนมีสัดส่วนที่แน่นอน */
+.info-left {
+    flex: 1; /* กินพื้นที่ 1 ส่วน */
+    text-align: left;
+    /* ป้องกันข้อความยาวเกินจนดันรูป */
+    min-width: 0; 
+}
+
+.info-center {
+    flex: 0 0 auto; /* ให้วงกลมขนาดคงที่ ไม่โดนบีบ ไม่โดนขยาย */
+    display: flex;
+    justify-content: center;
+    min-width: 300px; /* จองพื้นที่ให้วงกลมพอดีๆ */
+}
+
+.info-right {
+    flex: 1; /* กินพื้นที่ 1 ส่วน (เท่ากับฝั่งซ้าย) */
+    text-align: right;
+    min-width: 0;
+}
+
+/* เพิ่มเติม: จัดการเรื่องข้อความที่อาจจะยาวเกินไป */
+.info-left h1, .info-left h3 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
 
 /* Circle & Animation */
 /* --- วงกลมรูปตรงกลาง (กลับมาใช้แบบ Hover Animation) --- */

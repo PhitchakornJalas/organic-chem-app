@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Organic Chem Explorer</title>
+  <title>{{ group.name_en }}</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -23,11 +23,13 @@
       <div class="detail-card main-info-card">
         <div class="detail-header-content">
           <div class="info-left">
-            <h1 class="title-th">{{ group.name_th }}</h1>
-            <h3 class="title-en">{{ group.name_en }}</h3>
+            <h1 class="title-th" style="font-size: 2.2rem; margin-bottom: 0.2rem;">{{ group.name_th }}</h1>
+            <h3 class="title-en" style="font-size: 1.3rem; opacity: 0.7; margin-bottom: 1.2rem;">{{ group.name_en }}
+            </h3>
             <div class="data-badge">
-              <small>หมู่ฟังก์ชัน:</small>
-              <p>{{ group.groupName }}</p>
+              <small style="font-size: 0.9rem; display: block; margin-bottom: 3px; opacity: 0.8;">หมู่ฟังก์ชัน:</small>
+              <p style="font-weight: bold; font-size: 1.6rem; color: var(--primary-color); line-height: 1.1;">{{
+                group.groupName }}</p>
             </div>
           </div>
 
@@ -38,13 +40,23 @@
           </div>
 
           <div class="info-right">
-            <div class="data-badge">
-              <small>สูตรทั่วไป:</small>
-              <p class="formula-render">{{ group.formula }}</p>
+            <div class="data-badge" style="margin-bottom: 1.5rem;">
+              <small style="font-size: 0.9rem; display: block; margin-bottom: 8px; opacity: 0.8;">สูตรทั่วไป:</small>
+              <div>
+                <span class="formula-tag" style="padding: 5px 18px; border-radius: 12px;">
+                  <span class="formula-render" style="font-size: 1.6rem; font-weight: bold;">{{ group.formula }}</span>
+                </span>
+              </div>
             </div>
             <div class="data-badge accent">
-              <small>สูตรโมเลกุล:</small>
-              <p class="formula-render">{{ group.molecularFormula }}</p>
+              <small style="font-size: 0.9rem; display: block; margin-bottom: 8px; opacity: 0.8;">สูตรโมเลกุล:</small>
+              <div>
+                <span class="formula-tag"
+                  style="padding: 5px 18px; border-radius: 12px; background: var(--accent-color);">
+                  <span class="formula-render" style="font-size: 1.6rem; font-weight: bold;">{{ group.molecularFormula
+                    }}</span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -62,8 +74,11 @@
             <div class="card-content">
               <h4 class="item-title">{{ item.name_th }}</h4>
               <h3 class="item-title">{{ item.IUPAC }}</h3>
-              <small>สูตรโมเลกุล: <span class="formula-render item-formula">{{ item.molecularFormula }}</span></small>
-              <!-- <p class="item-usage">{{ item.usage }}</p> -->
+              <small>สูตรโมเลกุล: <span class="formula-tag"><span class="formula-render">{{ item.molecularFormula
+                    }}</span></span></small>
+              <p class="item-usage">Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore dicta quae
+                reiciendis blanditiis autem quod voluptatum placeat repellendus repudiandae, eum explicabo nemo numquam
+                ad quo est quis incidunt cum dolorum.</p>
             </div>
           </div>
           {% endfor %}
