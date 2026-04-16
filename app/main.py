@@ -80,7 +80,6 @@ def search():
 
         MATCH (i:Items)-[:FUNCTIONALGROUP_IS]->(f:FunctionalGroup)
         WHERE toLower(trim(i.name_th)) = toLower(trim($q))
-        OR toLower(trim(i.name_en)) = toLower(trim($q))
         RETURN f.name_en AS name_en
 
         LIMIT 1
