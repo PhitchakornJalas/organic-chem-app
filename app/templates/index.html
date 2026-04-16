@@ -21,7 +21,15 @@
     <section style="grid-column: 1 / -1; margin-bottom: 2rem;">
       <div class="card search-container">
         <form action="/search" method="post" class="search-form">
-          <input type="text" name="compound" placeholder="พิมพ์ชื่อสาร เช่น Ethanol..." required class="search-input">
+          <input type="text" name="organicChemSearch" id="organicChemSearch-input" list="organicChemSearch-list" placeholder="ค้นหาชื่อสาร, หมู่ฟังก์ชัน หรือชื่อสิ่งของ (เช่น น้ำส้มสายชู)..."
+            required class="search-input" autocomplete="off">
+
+          <datalist id="organicChemSearch-list">
+            {% for name in all_searchable_names %}
+            <option value="{{ name }}">
+              {% endfor %}
+          </datalist>
+
           <button type="submit" class="btn-search">ค้นหา</button>
         </form>
       </div>
@@ -118,5 +126,23 @@
 </body>
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // ตรวจสอบ Flash Message จาก Flask
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          Swal.fire({
+            title: 'ขออภัย!',
+            text: '{{ message }}',
+            icon: '{{ "error" if category == "error" else "info" }}',
+            confirmButtonText: 'ตกลง',
+            confirmButtonColor: '#3085d6'
+          });
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+</script>
 
 </html>
