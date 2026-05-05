@@ -1,0 +1,52 @@
+<nav class="navbar">
+    <div class="nav-container">
+        <!-- ฝั่งซ้าย: Logo + เมนู (จะอยู่ติดกัน) -->
+        <div class="nav-left-group">
+            <a href="{{ url_for('index') }}" class="nav-brand">
+                <span class="nav-logo">🧪</span>
+                <span class="nav-title">ChemGraph</span>
+            </a>
+
+            <!-- รายการเมนูสำหรับ Desktop (จะแสดงถัดจากชื่อ) -->
+            <ul class="nav-menu-desktop">
+                <li><a href="{{ url_for('index') }}" class="nav-link">หน้าหลัก</a></li>
+            </ul>
+        </div>
+
+        <!-- ฝั่งขวา: ปุ่ม Login สำหรับ Desktop -->
+        <div class="nav-right-desktop">
+            {% if session.get('logged_in') %}
+                <a href="" class="nav-btn btn-logout">ออกจากระบบ</a>
+            {% else %}
+                <a href="" class="nav-btn btn-login">เข้าสู่ระบบ (Admin)</a>
+            {% endif %}
+        </div>
+
+        <!-- เมนูสำหรับ Mobile (Hamburger) -->
+        <button class="nav-toggle" id="nav-toggle">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        
+        <ul class="nav-menu-mobile" id="nav-menu-mobile">
+            <li><a href="{{ url_for('index') }}" class="nav-link">หน้าหลัก</a></li>
+            <li class="mobile-auth">
+                {% if session.get('logged_in') %}
+                    <a href="" class="nav-btn btn-logout">ออกจากระบบ</a>
+                {% else %}
+                    <a href="" class="nav-btn btn-login">เข้าสู่ระบบ (Admin)</a>
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<script>
+    const toggle = document.getElementById('nav-toggle');
+    const mobileMenu = document.getElementById('nav-menu-mobile');
+    toggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('active');
+        toggle.classList.toggle('active');
+    });
+</script>

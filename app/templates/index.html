@@ -9,9 +9,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
 </head>
 
 <body>
+  {% include 'navbar.html' %}
+
   <div class="app-wrapper">
     <header style="grid-column: 1 / -1; text-align: center; margin-bottom: 2rem;">
       <h1 class="title-main">Organic Chem Explorer</h1>
@@ -114,13 +117,13 @@
       </div>
       {% endif %} -->
 
-      <div style="margin-top: 3rem; text-align: center; opacity: 0.7; font-size: 0.85rem;">
+      <!-- <div style="margin-top: 3rem; text-align: center; opacity: 0.7; font-size: 0.85rem;">
         <div style="margin-top: 10px;">
           <a href="/admin"
             style="color: var(--primary-color); text-decoration: none; font-weight: bold;">เข้าสู่โหมดจัดการข้อมูล
             (Admin) →</a>
         </div>
-      </div>
+      </div> -->
       </main>
   </div>
 </body>
