@@ -4,7 +4,7 @@ from neo4j import GraphDatabase
 
 app = Flask(__name__)
 
-app.secret_key = 'pp222324'
+app.secret_key = os.getenv("SECRET_KEY")
 
 # ดึงค่าจาก environment ที่ตั้งไว้ใน docker-compose
 uri = os.getenv("NEO4J_URI", "bolt://neo4j:7687") 
