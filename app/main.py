@@ -97,6 +97,11 @@ def search():
             flash("ไม่พบข้อมูลสารหรือสิ่งของที่คุณค้นหา", "error")
             return redirect(url_for('index'))
 
+@app.route('/reactions')
+def reactions():
+    # ในอนาคตสามารถดึงข้อมูลปฏิกิริยาจาก Neo4j มาแสดงผลที่นี่ได้
+    return render_template('reactions.html')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':

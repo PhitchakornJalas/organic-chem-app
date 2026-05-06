@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ปฏิกิริยาเคมี - Organic Chem Explorer</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <!-- เรียกไฟล์ที่แยกออกมา -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reactions.css') }}">
+</head>
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="reactions-container">
+        <h2 class="category-title">🔥 ปฏิกิริยาการเผาไหม้ (Combustion)</h2>
+        
+        <div class="reaction-grid">
+            <!-- การ์ด Alkane -->
+            <div class="reaction-card">
+                <div class="reaction-name">
+                    <span>แอลเคน (Alkane)</span>
+                    <span class="reaction-subtitle">เผาไหม้สมบูรณ์ ไม่มีเขม่า</span>
+                </div>
+                <div class="equation-box">
+                    C<sub>n</sub>H<sub>2n+2</sub> + O<sub>2</sub> ── Δ ──> CO<sub>2</sub> + H<sub>2</sub>O
+                </div>
+                <div><span class="condition-tag">เงื่อนไข: ความร้อน (Heat)</span></div>
+            </div>
+
+            <!-- การ์ด Alkene -->
+            <div class="reaction-card">
+                <div class="reaction-name">
+                    <span>แอลคีน (Alkene)</span>
+                    <span class="reaction-subtitle">เผาไหม้ไม่สมบูรณ์ มีเขม่าเล็กน้อย</span>
+                </div>
+                <div class="equation-box">
+                    C<sub>n</sub>H<sub>2n</sub> + O<sub>2</sub> ── Δ ──> CO<sub>2</sub> + H<sub>2</sub>O + (C + CO)
+                </div>
+                <div><span class="condition-tag">เงื่อนไข: ความร้อน (Heat)</span></div>
+            </div>
+
+            <!-- การ์ด Alkyne/Aromatic -->
+            <div class="reaction-card">
+                <div class="reaction-name">
+                    <span>แอลไคน์ & อะโรมาติก (Alkyne & Aromatic)</span>
+                    <span class="reaction-subtitle">เผาไหม้ไม่สมบูรณ์ เขม่ามาก</span>
+                </div>
+                <div class="equation-box">
+                    C<sub>n</sub>H<sub>2n-2</sub> + O<sub>2</sub> ── Δ ──> CO<sub>2</sub> + H<sub>2</sub>O + C (Soot)
+                </div>
+                <div><span class="condition-tag">เงื่อนไข: ความร้อน (Heat)</span></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

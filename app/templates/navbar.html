@@ -10,6 +10,7 @@
             <!-- รายการเมนูสำหรับ Desktop (จะแสดงถัดจากชื่อ) -->
             <ul class="nav-menu-desktop">
                 <li><a href="{{ url_for('index') }}" class="nav-link">หน้าหลัก</a></li>
+                <li><a href="{{ url_for('reactions') }}" class="nav-link">ปฏิกิริยาเคมี</a></li>
             </ul>
         </div>
 
@@ -42,6 +43,7 @@
 
         <ul class="nav-menu-mobile" id="nav-menu-mobile">
             <li><a href="{{ url_for('index') }}" class="nav-link">หน้าหลัก</a></li>
+            <li><a href="{{ url_for('reactions') }}" class="nav-link">ปฏิกิริยาเคมี</a></li>
             <li class="mobile-auth">
                 {% if session.get('sid') %}
                 <a href="{{ url_for('logout') }}" class="nav-btn btn-logout">ออกจากระบบ</a>
