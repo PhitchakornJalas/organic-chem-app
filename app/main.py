@@ -97,6 +97,10 @@ def search():
             flash("ไม่พบข้อมูลสารหรือสิ่งของที่คุณค้นหา", "error")
             return redirect(url_for('index'))
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    return render_template('register.html')
+
 def create_neo4j_session(username):
     session_id = str(uuid.uuid4())
     now = datetime.now().isoformat()

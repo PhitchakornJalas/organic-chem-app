@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมัครสมาชิก - Organic Chem Explorer</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="login-wrapper">
+        <header class="login-header">
+            <h1 class="title-main" style="font-size: 2rem; color: var(--primary-color);">📝 สมัครสมาชิก</h1>
+            <p>สร้างบัญชีนักเรียนเพื่อเริ่มต้นใช้งาน</p>
+        </header>
+
+        <form action="/register" method="POST" style="margin-top: 20px;">
+            <div class="form-group">
+                <label for="name">ชื่อ-นามสกุล</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="เช่น สมชาย ใจดี" required>
+            </div>
+
+            <div class="form-group">
+                <label for="username">ชื่อผู้ใช้ (Username)</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">รหัสผ่าน (Password)</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="อย่างน้อย 8 ตัวอักษร" required>
+            </div>
+
+            <button type="submit" class="btn-login-form">ยืนยันการสมัคร</button>
+        </form>
+
+        <div class="footer-text">
+            มีบัญชีอยู่แล้ว? <a href="/login">เข้าสู่ระบบที่นี่</a>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              Swal.fire({
+                title: '{{ "สำเร็จ!" if category == "success" else "แจ้งเตือน" }}',
+                text: '{{ message }}',
+                icon: '{{ category if category in ["success", "error", "warning", "info"] else "info" }}',
+                confirmButtonColor: '#0077b6'
+              });
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </script>
+</body>
+</html>
