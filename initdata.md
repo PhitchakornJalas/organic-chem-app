@@ -526,11 +526,17 @@ MATCH (f:FunctionalGroup {name_en: "Ketone"})<br>
 MATCH (c:Chemical) WHERE c.IUPAC IN ["Butane-2,3-dione", "Pentane-2,3-dione", "Hexane-2,3-dione", "Heptane-2,3-dione", "Octane-2,3-dione"]<br>
 CREATE (c)-[:TYPE_OF]->(f);<br>
 
-## Reaction General
+## Reaction
 MATCH (r:Reaction)<br>
 DETACH DELETE r<br><br>
 CREATE<br>
 (r1:Reaction {name_en: "Combustion reaction", name_th: "ปฏิกิริยาการเผาไหม้", createdAt: datetime({timezone: '+07:00'})}),<br>
+(r2:Reaction {name_en: "Substitution reaction", name_th: "การฟอกจางสีสารละลาย เกิดปฏิกิริยาแทนที่", createdAt: datetime({timezone: '+07:00'})}),<br>
+(r3:Reaction {name_en: "Addition reaction", name_th: "การฟอกจางสีสารละลาย เกิดปฏิกิริยาการเติม", createdAt: datetime({timezone: '+07:00'})}),<br>
+(r4:Reaction {name_en: "Esterification", name_th: "ปฏิกิริยาเอสเทอริฟิเคชัน", createdAt: datetime({timezone: '+07:00'})}),<br>
+(r5:Reaction {name_en: "Hydrolysis ester", name_th: "ปฏิกิริยาไฮโดรไลซิสเอสเทอร์", createdAt: datetime({timezone: '+07:00'})}),<br>
+(r6:Reaction {name_en: "Synthesis amide ", name_th: "ปฏิกิรยาการสังเคราะห์เอไมด์ ", createdAt: datetime({timezone: '+07:00'})}),<br>
+(r7:Reaction {name_en: "Hydrolysis amide ", name_th: "ปฏิกิรยาไฮโดรไลซิสของเอไมด์", createdAt: datetime({timezone: '+07:00'})})<br>
 
 ## Condition
 MATCH (con:Condition)<br>
@@ -540,6 +546,8 @@ CREATE<br>
 
 ## Reaction FunctionGroup Relation 
 #### [:REACTANT_IN] [:REQUIRED_FOR] [:MAIN_PRODUCT] [:BY_PRODUCT]
+MATCH (sr:SubReaction)<br>
+DETACH DELETE sr<br>
 ##### ===== Combustion reaction (Alkane) =====
 MATCH (f:FunctionalGroup {name_en: "Alkane"})<br>
 MATCH (c:Chemical {IUPAC: "Oxygen"})<br>
@@ -548,16 +556,16 @@ MATCH (c2:Chemical {IUPAC: "Water"})<br>
 MATCH (c3:Chemical {IUPAC: "Carbon monoxide"})<br>
 MATCH (c4:Chemical {IUPAC: "Carbon"})<br>
 MATCH (con:Condition {name_en: "Heat"})<br>
-CREATE (r:Reaction {name_en: "Combustion reaction Alkane", description: "แอลเคนถ้าออกซิเจนเพียงพอจะเผาแล้วไม่มีเขม่า", createdAt: datetime({timezone: '+07:00'})})<br>
-MATCH (rm:Reaction {name_en: "Combustion reaction"})<br>
-CREATE (r)-[:TYPE_OF]->(rm)<br>
-CREATE (f)-[:REACTANT_IN]->(r)<br>
-CREATE (c)-[:REACTANT_IN]->(r)<br>
-CREATE (con)-[:REQUIRED_FOR]->(r)<br>
-CREATE (r)-[:MAIN_PRODUCT]->(c1)<br>
-CREATE (r)-[:MAIN_PRODUCT]->(c2)<br>
-CREATE (r)-[:BY_PRODUCT]->(c3)<br>
-CREATE (r)-[:BY_PRODUCT]->(c4);<br>
+CREATE (sr:SubReaction {name_en: "Combustion reaction Alkane", description: "แอลเคนถ้าออกซิเจนเพียงพอจะเผาแล้วไม่มีเขม่า", createdAt: datetime({timezone: '+07:00'})})<br>
+MATCH (r:Reaction {name_en: "Combustion reaction"})<br>
+CREATE (sr)-[:TYPE_OF]->(r)<br>
+CREATE (f)-[:REACTANT_IN]->(sr)<br>
+CREATE (c)-[:REACTANT_IN]->(sr)<br>
+CREATE (con)-[:REQUIRED_FOR]->(sr)<br>
+CREATE (sr)-[:MAIN_PRODUCT]->(c1)<br>
+CREATE (sr)-[:MAIN_PRODUCT]->(c2)<br>
+CREATE (sr)-[:BY_PRODUCT]->(c3)<br>
+CREATE (sr)-[:BY_PRODUCT]->(c4);<br>
 ##### ===== Combustion reaction (Alkene) =====
 MATCH (f:FunctionalGroup {name_en: "Alkene"})<br>
 MATCH (c:Chemical {IUPAC: "Oxygen"})<br>
@@ -566,16 +574,16 @@ MATCH (c2:Chemical {IUPAC: "Water"})<br>
 MATCH (c3:Chemical {IUPAC: "Carbon monoxide"})<br>
 MATCH (c4:Chemical {IUPAC: "Carbon"})<br>
 MATCH (con:Condition {name_en: "Heat"})<br>
-CREATE (r:Reaction {name_en: "Combustion reaction Alkene", createdAt: datetime({timezone: '+07:00'})})<br>
-MATCH (rm:Reaction {name_en: "Combustion reaction"})<br>
-CREATE (r)-[:TYPE_OF]->(rm)<br>
-CREATE (f)-[:REACTANT_IN]->(r)<br>
-CREATE (c)-[:REACTANT_IN]->(r)<br>
-CREATE (con)-[:REQUIRED_FOR]->(r)<br>
-CREATE (r)-[:MAIN_PRODUCT]->(c1)<br>
-CREATE (r)-[:MAIN_PRODUCT]->(c2)<br>
-CREATE (r)-[:BY_PRODUCT]->(c3)<br>
-CREATE (r)-[:BY_PRODUCT]->(c4);<br>
+CREATE (sr:SubReaction {name_en: "Combustion reaction Alkene", createdAt: datetime({timezone: '+07:00'})})<br>
+MATCH (r:Reaction {name_en: "Combustion reaction"})<br>
+CREATE (sr)-[:TYPE_OF]->(r)<br>
+CREATE (f)-[:REACTANT_IN]->(sr)<br>
+CREATE (c)-[:REACTANT_IN]->(sr)<br>
+CREATE (con)-[:REQUIRED_FOR]->(sr)<br>
+CREATE (sr)-[:MAIN_PRODUCT]->(c1)<br>
+CREATE (sr)-[:MAIN_PRODUCT]->(c2)<br>
+CREATE (sr)-[:BY_PRODUCT]->(c3)<br>
+CREATE (sr)-[:BY_PRODUCT]->(c4);<br>
 ##### ===== Combustion reaction (Alkyne) =====
 MATCH (f:FunctionalGroup {name_en: "Alkyne"})<br>
 MATCH (c:Chemical {IUPAC: "Oxygen"})<br>
@@ -584,16 +592,16 @@ MATCH (c2:Chemical {IUPAC: "Water"})<br>
 MATCH (c3:Chemical {IUPAC: "Carbon monoxide"})<br>
 MATCH (c4:Chemical {IUPAC: "Carbon"})<br>
 MATCH (con:Condition {name_en: "Heat"})<br>
-CREATE (r:Reaction {name_en: "Combustion reaction Alkyne", createdAt: datetime({timezone: '+07:00'})})<br>
-MATCH (rm:Reaction {name_en: "Combustion reaction"})<br>
-CREATE (r)-[:TYPE_OF]->(rm)<br>
-CREATE (f)-[:REACTANT_IN]->(r)<br>
-CREATE (c)-[:REACTANT_IN]->(r)<br>
-CREATE (con)-[:REQUIRED_FOR]->(r)<br>
-CREATE (r)-[:MAIN_PRODUCT]->(c1)<br>
-CREATE (r)-[:MAIN_PRODUCT]->(c2)<br>
-CREATE (r)-[:BY_PRODUCT]->(c3)<br>
-CREATE (r)-[:BY_PRODUCT]->(c4);<br>
+CREATE (sr:SubReaction {name_en: "Combustion reaction Alkyne", createdAt: datetime({timezone: '+07:00'})})<br>
+MATCH (r:Reaction {name_en: "Combustion reaction"})<br>
+CREATE (sr)-[:TYPE_OF]->(r)<br>
+CREATE (f)-[:REACTANT_IN]->(sr)<br>
+CREATE (c)-[:REACTANT_IN]->(sr)<br>
+CREATE (con)-[:REQUIRED_FOR]->(sr)<br>
+CREATE (sr)-[:MAIN_PRODUCT]->(c1)<br>
+CREATE (sr)-[:MAIN_PRODUCT]->(c2)<br>
+CREATE (sr)-[:BY_PRODUCT]->(c3)<br>
+CREATE (sr)-[:BY_PRODUCT]->(c4);<br>
 ##### ===== Combustion reaction (Aromatic) =====
 MATCH (f:FunctionalGroup {name_en: "Aromatic"})<br>
 MATCH (c:Chemical {IUPAC: "Oxygen"})<br>
@@ -602,16 +610,16 @@ MATCH (c2:Chemical {IUPAC: "Water"})<br>
 MATCH (c3:Chemical {IUPAC: "Carbon monoxide"})<br>
 MATCH (c4:Chemical {IUPAC: "Carbon"})<br>
 MATCH (con:Condition {name_en: "Heat"})<br>
-CREATE (r:Reaction {name_en: "Combustion reaction Aromatic", createdAt: datetime({timezone: '+07:00'})})<br>
-MATCH (rm:Reaction {name_en: "Combustion reaction"})<br>
-CREATE (r)-[:TYPE_OF]->(rm)<br>
-CREATE (f)-[:REACTANT_IN]->(r)<br>
-CREATE (c)-[:REACTANT_IN]->(r)<br>
-CREATE (con)-[:REQUIRED_FOR]->(r)<br>
-CREATE (r)-[:MAIN_PRODUCT]->(c1)<br>
-CREATE (r)-[:MAIN_PRODUCT]->(c2)<br>
-CREATE (r)-[:BY_PRODUCT]->(c3)<br>
-CREATE (r)-[:BY_PRODUCT]->(c4);<br>
+CREATE (sr:SubReaction {name_en: "Combustion reaction Aromatic", createdAt: datetime({timezone: '+07:00'})})<br>
+MATCH (r:Reaction {name_en: "Combustion reaction"})<br>
+CREATE (sr)-[:TYPE_OF]->(r)<br>
+CREATE (f)-[:REACTANT_IN]->(sr)<br>
+CREATE (c)-[:REACTANT_IN]->(sr)<br>
+CREATE (con)-[:REQUIRED_FOR]->(sr)<br>
+CREATE (sr)-[:MAIN_PRODUCT]->(c1)<br>
+CREATE (sr)-[:MAIN_PRODUCT]->(c2)<br>
+CREATE (sr)-[:BY_PRODUCT]->(c3)<br>
+CREATE (sr)-[:BY_PRODUCT]->(c4);<br>
 
 ## User
 MATCH (u:User)<br>
