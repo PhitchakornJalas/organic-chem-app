@@ -93,6 +93,27 @@ def user(file_name):
 
         print(f"""(u{index}:User {{username: "{username}", password: "{generate_password_hash(str(password))}", role: "{role}", name: "{name}", createdAt: datetime({{timezone: '+07:00'}})}}),<br>""")
 
+def functionGroup(file_name):
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_path, file_name)
+    
+    if not os.path.exists(file_path):
+        print(f"❌ หาไฟล์ไม่เจอที่: {file_path}")
+        return
+
+    df = pd.read_excel(file_path, sheet_name='FunctionalGroup')
+    
+    df = df[df.iloc[:, 0] != 'name_en'] 
+
+    for index, row in df.iterrows():
+        name_en = row.iloc[0]
+        name_th = row.iloc[1]
+        formula = row.iloc[2]
+        molecularFormula = row.iloc[3]
+        groupName = row.iloc[4]
+        image = row.iloc[5]
+
+        print(f"""(f{index}:FunctionalGroup {{name_en: "{name_en}", name_th: "{name_th}", formula: "{formula}", molecularFormula: "{molecularFormula}", groupName: "{groupName}", image: {image}, createdAt: datetime({{timezone: '+07:00'}})}}),<br>""")
 
 if __name__ == "__main__":
     print("============================== Chemical ==============================")
@@ -103,3 +124,5 @@ if __name__ == "__main__":
     condition('chem.xlsx')
     print("============================== User ==============================")
     user('chem.xlsx')
+    print("============================== FunctionGroup ==============================")
+    functionGroup('chem.xlsx')
