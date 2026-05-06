@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>สมัครสมาชิก - Organic Chem Explorer</title>
-    
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
-    
+
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
+
 <body>
 
     {% include 'navbar.html' %}
@@ -29,17 +31,23 @@
                 <input type="text" id="name" name="name" class="form-control" placeholder="เช่น สมชาย ใจดี" required>
             </div>
 
+            <!-- ช่องชื่อผู้ใช้ -->
             <div class="form-group">
                 <label for="username">ชื่อผู้ใช้ (Username)</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="username" required>
+                <input type="text" id="username" name="username" class="form-control"
+                    placeholder="ขึ้นต้นด้วยภาษาอังกฤษ" required>
+                <small id="username-error" style="color: #ff4d4d; display: none;"></small>
             </div>
 
+            <!-- ช่องรหัสผ่าน -->
             <div class="form-group">
                 <label for="password">รหัสผ่าน (Password)</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="อย่างน้อย 8 ตัวอักษร" required>
+                <input type="password" id="password" name="password" class="form-control"
+                    placeholder="อย่างน้อย 8 ตัวอักษร" required>
+                <small id="password-error" style="color: #ff4d4d; display: none;"></small>
             </div>
 
-            <button type="submit" class="btn-login-form">ยืนยันการสมัคร</button>
+            <button type="submit" id="submitBtn" class="btn-login-form">ยืนยันการสมัคร</button>
         </form>
 
         <div class="footer-text">
@@ -50,20 +58,125 @@
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <script>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              Swal.fire({
-                title: '{{ "สำเร็จ!" if category == "success" else "แจ้งเตือน" }}',
-                text: '{{ message }}',
-                icon: '{{ category if category in ["success", "error", "warning", "info"] else "info" }}',
-                confirmButtonColor: '#0077b6'
-              });
-            {% endfor %}
-          {% endif %}
+        const registerForm = document.querySelector('form');
+        const nameInput = document.getElementById('name');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const usernameError = document.getElementById('username-error');
+        const passwordError = document.getElementById('password-error');
+
+        let isUsernameValid = false;
+
+        // --- 1. ดักจับการส่งฟอร์ม (เข้มงวด 100% ถ้ามีไทยคือดีดออก) ---
+        registerForm.addEventListener('submit', function (e) {
+            const nameVal = nameInput.value.trim();
+            const passVal = passwordInput.value;
+
+            const hasEnglish = /[a-zA-Z]/.test(passVal);
+            const hasThai = /[ก-๙]/.test(passVal); // ตรวจสอบภาษาไทย
+            const isLongEnough = passVal.length >= 8;
+
+            // รหัสผ่านที่ผ่าน: ต้องยาว 8+, มีอังกฤษ, และ "ห้าม" มีไทยเด็ดขาด
+            const isPasswordOk = isLongEnough && hasEnglish && !hasThai;
+            const isNameOk = nameVal.length > 0;
+
+            if (!isNameOk || !isUsernameValid || !isPasswordOk) {
+                e.preventDefault(); // สั่งหยุดฟอร์มทันที
+
+                let errorMsg = "ข้อมูลไม่ถูกต้องตามเงื่อนไข";
+
+                if (hasThai) errorMsg = "รหัสผ่านห้ามมีภาษาไทยเด็ดขาด!";
+                else if (!isLongEnough) errorMsg = "รหัสผ่านต้องยาวอย่างน้อย 8 ตัวอักษร";
+                else if (!hasEnglish) errorMsg = "รหัสผ่านต้องมีตัวอักษรภาษาอังกฤษอย่างน้อย 1 ตัว";
+                else if (!isUsernameValid) errorMsg = "ชื่อผู้ใช้ไม่ถูกต้องหรือมีคนใช้แล้ว";
+                else if (!isNameOk) errorMsg = "กรุณากรอกชื่อ-นามสกุล";
+
+                Swal.fire({
+                    title: 'สมัครสมาชิกไม่ได้',
+                    text: errorMsg,
+                    icon: 'error',
+                    confirmButtonColor: '#0077b6'
+                });
+            }
+        });
+
+        // --- 2. เช็ค Username (อังกฤษตัวแรก + เช็คซ้ำ) ---
+        usernameInput.addEventListener('input', function () {
+            const val = this.value.trim();
+            const englishRegex = /^[A-Za-z]/;
+
+            usernameError.style.display = 'none';
+            isUsernameValid = false; // เริ่มต้นให้เป็น false ไว้ก่อนเสมอ
+
+            if (val.length === 0) return;
+
+            if (!englishRegex.test(val)) {
+                usernameError.textContent = "ชื่อผู้ใช้ต้องขึ้นต้นด้วยภาษาอังกฤษเท่านั้น";
+                usernameError.style.display = 'block';
+            } else if (val.length < 3) {
+                usernameError.textContent = "ชื่อผู้ใช้ต้องยาวอย่างน้อย 3 ตัวอักษร";
+                usernameError.style.display = 'block';
+            } else {
+                // ส่งไปเช็คที่ Server
+                fetch(`/check_username?username=${encodeURIComponent(val)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        // ต้องเช็คเงื่อนไขให้ชัดเจนว่าเป็น true จริงๆ
+                        if (data.exists === true) {
+                            usernameError.textContent = "ชื่อนี้มีคนใช้แล้ว";
+                            usernameError.style.display = 'block';
+                            isUsernameValid = false;
+                        } else {
+                            // ถ้า exists เป็น false ถึงจะให้ผ่าน
+                            usernameError.style.display = 'none';
+                            isUsernameValid = true;
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error checking username:", err);
+                        isUsernameValid = false;
+                    });
+            }
+        });
+
+        // --- 3. เช็ครหัสผ่าน (ดักภาษาไทย Real-time) ---
+        passwordInput.addEventListener('input', function () {
+            const val = this.value;
+            const hasThai = /[ก-๙]/.test(val); // เช็คภาษาไทย
+            const hasEnglish = /[a-zA-Z]/.test(val);
+            const isLongEnough = val.length >= 8;
+
+            if (val.length > 0) {
+                if (hasThai) {
+                    passwordError.textContent = "ห้ามใช้ภาษาไทยในรหัสผ่าน";
+                    passwordError.style.display = 'block';
+                } else if (!hasEnglish || !isLongEnough) {
+                    passwordError.textContent = "ต้องมีภาษาอังกฤษและยาว 8 ตัวขึ้นไป";
+                    passwordError.style.display = 'block';
+                } else {
+                    passwordError.style.display = 'none';
+                }
+            } else {
+                passwordError.style.display = 'none';
+            }
+        });
+
+        // แสดงผล Flash Message จาก Flask
+        {% with messages = get_flashed_messages(with_categories = true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        Swal.fire({
+            title: '{{ "สำเร็จ!" if category == "success" else "แจ้งเตือน" }}',
+            text: '{{ message }}',
+            icon: '{{ category if category in ["success", "error", "warning", "info"] else "info" }}',
+            confirmButtonColor: '#0077b6'
+        });
+        {% endfor %}
+        {% endif %}
         {% endwith %}
     </script>
 </body>
+
 </html>

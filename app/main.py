@@ -1,9 +1,9 @@
 import os
 import uuid
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from neo4j import GraphDatabase
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
@@ -99,7 +99,66 @@ def search():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if not username or not username[0].isalpha() or len(password) < 8:
+            flash("ข้อมูลไม่ถูกต้องตามเงื่อนไข", "error")
+            return redirect(url_for('register'))
+        
+        # กำหนด Role เป็น student เสมอ
+        role = "student" 
+
+        with driver.session() as db_session:
+            # 1. ตรวจสอบก่อนว่ามี Username นี้หรือยัง
+            check_user = db_session.run("MATCH (u:User {username: $u}) RETURN u", u=username).single()
+            
+            if check_user:
+                flash("ชื่อผู้ใช้นี้ถูกใช้งานแล้ว กรุณาใช้ชื่ออื่น", "error")
+                return redirect(url_for('register'))
+
+            # 2. ทำการ Hash รหัสผ่านก่อนบันทึก
+            hashed_password = generate_password_hash(str(password))
+
+            # 3. สร้างโหนด User ใหม่ใน Neo4j
+            create_query = """
+            CREATE (u:User {
+                username: $username,
+                password: $password,
+                name: $name,
+                role: $role,
+                createdAt: datetime({timezone: '+07:00'})
+            })
+            """
+            db_session.run(create_query, 
+                           username=username, 
+                           password=hashed_password, 
+                           name=name, 
+                           role=role)
+            
+            flash("สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ", "success")
+            return redirect(url_for('login'))
+
     return render_template('register.html')
+
+@app.route('/check_username')
+def check_username():
+    username = request.args.get('username', '').strip()
+    
+    if not username:
+        return jsonify({"exists": False})
+
+    with driver.session() as db_session:
+        # ใช้คำสั่ง Cypher เช็คว่ามี Node User ที่มีชื่อนี้ไหม
+        result = db_session.run("MATCH (u:User {username: $u}) RETURN u LIMIT 1", u=username)
+        user = result.single()
+        
+        # ถ้าเจอ user แสดงว่าซ้ำ (exists: True) ถ้าไม่เจอแสดงว่าไม่ซ้ำ (exists: False)
+        exists = user is not None
+        
+    return jsonify({"exists": exists})
 
 def create_neo4j_session(username):
     session_id = str(uuid.uuid4())

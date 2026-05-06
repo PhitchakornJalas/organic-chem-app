@@ -52,10 +52,14 @@
           {% if messages %}
             {% for category, message in messages %}
               Swal.fire({
-                title: 'แจ้งเตือน',
+                // ปรับหัวข้อตามประเภท
+                title: '{{ "สำเร็จ!" if category == "success" else "แจ้งเตือน" }}',
                 text: '{{ message }}',
-                icon: '{{ "error" if category == "error" else "info" }}',
-                confirmButtonColor: '#0077b6'
+                // ตรวจสอบค่า category: ถ้าเป็น success ให้ขึ้นติ๊กถูกสีเขียว
+                icon: '{{ category if category in ["success", "error", "warning", "info"] else "info" }}',
+                confirmButtonColor: '#0077b6',
+                timer: 3000, // ปิดเองใน 3 วินาที (ไม่บังคับ)
+                timerProgressBar: true
               });
             {% endfor %}
           {% endif %}
