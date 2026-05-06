@@ -1,61 +1,91 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ปฏิกิริยาเคมี - Organic Chem Explorer</title>
-    
+    <title>ปฏิกิริยาเคมี - ChemGraph</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
-    <!-- เรียกไฟล์ที่แยกออกมา -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reactions.css') }}">
 </head>
+
 <body>
 
     {% include 'navbar.html' %}
 
-    <div class="reactions-container">
-        <h2 class="category-title">🔥 ปฏิกิริยาการเผาไหม้ (Combustion)</h2>
-        
-        <div class="reaction-grid">
-            <!-- การ์ด Alkane -->
-            <div class="reaction-card">
-                <div class="reaction-name">
-                    <span>แอลเคน (Alkane)</span>
-                    <span class="reaction-subtitle">เผาไหม้สมบูรณ์ ไม่มีเขม่า</span>
-                </div>
-                <div class="equation-box">
-                    C<sub>n</sub>H<sub>2n+2</sub> + O<sub>2</sub> ── Δ ──> CO<sub>2</sub> + H<sub>2</sub>O
-                </div>
-                <div><span class="condition-tag">เงื่อนไข: ความร้อน (Heat)</span></div>
-            </div>
-
-            <!-- การ์ด Alkene -->
-            <div class="reaction-card">
-                <div class="reaction-name">
-                    <span>แอลคีน (Alkene)</span>
-                    <span class="reaction-subtitle">เผาไหม้ไม่สมบูรณ์ มีเขม่าเล็กน้อย</span>
-                </div>
-                <div class="equation-box">
-                    C<sub>n</sub>H<sub>2n</sub> + O<sub>2</sub> ── Δ ──> CO<sub>2</sub> + H<sub>2</sub>O + (C + CO)
-                </div>
-                <div><span class="condition-tag">เงื่อนไข: ความร้อน (Heat)</span></div>
-            </div>
-
-            <!-- การ์ด Alkyne/Aromatic -->
-            <div class="reaction-card">
-                <div class="reaction-name">
-                    <span>แอลไคน์ & อะโรมาติก (Alkyne & Aromatic)</span>
-                    <span class="reaction-subtitle">เผาไหม้ไม่สมบูรณ์ เขม่ามาก</span>
-                </div>
-                <div class="equation-box">
-                    C<sub>n</sub>H<sub>2n-2</sub> + O<sub>2</sub> ── Δ ──> CO<sub>2</sub> + H<sub>2</sub>O + C (Soot)
-                </div>
-                <div><span class="condition-tag">เงื่อนไข: ความร้อน (Heat)</span></div>
-            </div>
+    <div class="app-wrapper">
+        <div class="navigation-area">
+            <a href="{{ url_for('index') }}" class="btn-back">
+                <span>←</span> กลับหน้าหลัก
+            </a>
         </div>
+
+        <header style="text-align: center; margin-bottom: 40px;">
+            <h1 style="color: var(--primary-color); font-size: 2.2rem;">ปฏิกิริยาของสารประกอบอินทรีย์</h1>
+            <p style="color: var(--text-color); opacity: 0.8;">สรุปสมการเคมีและเงื่อนไขของปฏิกิริยาต่างๆ</p>
+        </header>
+
+        {% for cat in categories %}
+        <!-- วนลูปหมวดหมู่ใหญ่ เช่น Combustion, Addition -->
+        <section class="reaction-section">
+            <h2 class="category-title">
+                <!-- {% if cat.category_en == 'Combustion reaction' %}🔥{% endif %} -->
+                {{ cat.category_th }} ({{ cat.category_en }})
+            </h2>
+
+            <div class="reaction-list">
+                {% for sub in cat.sub_reactions %}
+                {% if sub.sub_name %} <!-- เช็กว่ามีปฏิกิริยาย่อยไหม -->
+                <div class="reaction-card">
+                    <div class="card-header">
+                        <span class="group-name">{{ sub.group_th }} ({{ sub.group_en }})</span>
+
+                        <!-- Logic แสดงระดับเขม่า เฉพาะหมวดการเผาไหม้ -->
+                        <!-- {% if cat.category_en == 'Combustion reaction' %}
+                        {% if sub.group_en == 'Alkane' %}
+                        <span class="soot-tag low">ไม่มีเขม่า</span>
+                        {% elif sub.group_en == 'Alkene' %}
+                        <span class="soot-tag med">เขม่าเล็กน้อย</span>
+                        {% else %}
+                        <span class="soot-tag high">เขม่ามาก</span>
+                        {% endif %}
+                        {% endif %} -->
+                    </div>
+
+                    <div class="equation-display">
+                        <!-- แสดงสารตั้งต้นทั้งหมด เชื่อมด้วย + -->
+                        {% for formula in sub.reactants %}
+                        {{ formula | safe }}{% if not loop.last %} + {% endif %}
+                        {% endfor %}
+
+                        <!-- ส่วนของลูกศรและเงื่อนไข -->
+                        <span class="arrow">── {{ sub.condition_symbol }} ──></span>
+
+                        <!-- แสดงผลิตภัณฑ์ทั้งหมด เชื่อมด้วย + -->
+                        {% for formula in sub.products %}
+                        {{ formula | safe }}{% if not loop.last %} + {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="card-footer">
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">
+                            {{ sub.description or ''}}
+                            <!-- {{ sub.description or 'ข้อมูลปฏิกิริยาสำหรับกลุ่ม ' ~ sub.group_th }} -->
+                        </p>
+                        <!-- <span class="condition-tag">{{ sub.condition }} ({{ sub.symbol }})</span> -->
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
     </div>
 
 </body>
+
 </html>
