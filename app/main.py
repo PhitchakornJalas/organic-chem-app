@@ -98,21 +98,23 @@ def search():
             return redirect(url_for('index'))
 
 def create_neo4j_session(username):
-    session_id = str(uuid.uuid4()) # สร้างไอดีสุ่ม
+    session_id = str(uuid.uuid4())
     now = datetime.now().isoformat()
     
     with driver.session() as db_session:
-        # สร้างโหนด Session ใหม่ และเชื่อมกับ User
-        # status: "active" คือใช้งานได้
+        # Step 1 & 2: ค้นหา Session เก่าของ User นี้ที่ยัง 'active' แล้วสั่ง 'expired' ให้หมด
+        # จากนั้นค่อยสร้าง Session ใหม่เชื่อมเข้าไป
         query = """
         MATCH (u:User {username: $username})
+        OPTIONAL MATCH (u)-[:HAS_SESSION]->(old_s:Session {status: 'active'})
+        SET old_s.status = 'expired', old_s.terminated_at = $now
+        WITH u
         CREATE (s:Session {
             id: $session_id, 
-            status: "active", 
+            status: 'active', 
             login_at: $now
         })
         CREATE (u)-[:HAS_SESSION]->(s)
-        RETURN s.id AS sid
         """
         db_session.run(query, username=username, session_id=session_id, now=now)
     return session_id
@@ -159,6 +161,25 @@ def logout():
     # ล้าง Session ใน Browser
     session.clear()
     return redirect(url_for('login'))
+
+@app.before_request
+def check_session_status():
+    # ไม่เช็คในหน้า Login, Logout และไฟล์ Static
+    if request.endpoint in ['login', 'logout', 'static'] or not request.endpoint:
+        return
+
+    sid = session.get('sid')
+    if sid:
+        with driver.session() as db_session:
+            # เช็คว่า Session ID ในคุกกี้ ยังมีสถานะเป็น 'active' ใน Neo4j หรือไม่
+            query = "MATCH (s:Session {id: $sid, status: 'active'}) RETURN s"
+            result = db_session.run(query, sid=sid).single()
+
+            if not result:
+                # ถ้าไม่เจอ หรือสถานะเปลี่ยนเป็น expired แล้ว ให้ล้างคุกกี้และเด้งไปหน้า Login
+                session.clear()
+                flash("เซสชันของคุณหมดอายุ หรือมีการเข้าสู่ระบบจากอุปกรณ์อื่น", "info")
+                return redirect(url_for('login'))
 
 if __name__ == '__main__':
     # host='0.0.0.0' สำคัญมากเพื่อให้เข้าถึงจากนอก Container ได้
