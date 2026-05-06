@@ -11,19 +11,18 @@ def chemical(file_name):
 
     df = pd.read_excel(file_path)
     
-    df = df[df.iloc[:, 0] != 'id'] 
+    df = df[df.iloc[:, 0] != 'IUPAC'] 
 
     for index, row in df.iterrows():
-        c_id = row.iloc[0]
-        IUPAC = row.iloc[1]
-        molecularFormula = row.iloc[2]
+        IUPAC = row.iloc[0]
+        molecularFormula = row.iloc[1]
         
-        print(f"""(c{c_id}:Chemical {{IUPAC: "{IUPAC}", molecularFormula: "{molecularFormula}", createdAt: datetime({{timezone: '+07:00'}})}}),<br>""")
+        print(f"""(c{index}:Chemical {{IUPAC: "{IUPAC}", molecularFormula: "{molecularFormula}", createdAt: datetime({{timezone: '+07:00'}})}}),<br>""")
 
-    grouped = df.groupby(df.columns[3])
+    grouped = df.groupby(df.columns[2])
 
     for f_name, group in grouped:
-        iupac_list = group.iloc[:, 1].tolist()
+        iupac_list = group.iloc[:, 0].tolist()
         iupac_formatted = ", ".join([f'"{name}"' for name in iupac_list])
         
         print(f'MATCH (f:FunctionalGroup {{name_en: "{f_name}"}})<br>')
