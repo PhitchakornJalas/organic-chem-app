@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from neo4j import GraphDatabase
 from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 
 app = Flask(__name__)
 
@@ -170,6 +171,25 @@ def reactions():
         
     return render_template('reactions.html', categories=categories)
 
+# admin
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # 1. เช็คว่า Login หรือยัง
+        # 2. เช็คว่า role ใน session เป็น 'admin' หรือไม่
+        if not session.get('logged_in') or session.get('role') != 'admin':
+            flash("คุณไม่มีสิทธิ์เข้าถึงหน้านี้!", "danger")
+            return redirect(url_for('login')) # หรือส่งไปหน้าแรก
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/admin/dashboard')
+@admin_required
+def admin_dashboard():
+    return render_template('admin/dashboard.html')
+
+# login & register
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -273,11 +293,14 @@ def login():
                     # จัดการชื่อ: ตัดเอาเฉพาะก้อนแรก
                     full_name = user_node.get('name', username)
                     first_name = full_name.split()[0] if full_name else username
+                    role = user_node.get('role', 'user')
                     
                     sid = create_neo4j_session(username)
+                    session['logged_in'] = True
                     session['sid'] = sid
                     session['user'] = first_name # เก็บเฉพาะชื่อหน้าใน Session
-                    return redirect(url_for('index'))
+                    session['role'] = role
+                    return redirect(url_for('admin_dashboard' if session['role'] == 'admin' else 'index'))
             
             flash("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "error")
     return render_template('login.html')

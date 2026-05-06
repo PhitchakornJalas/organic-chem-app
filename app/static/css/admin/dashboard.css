@@ -1,0 +1,156 @@
+  /* สไตล์เพิ่มเติมสำหรับหน้า Dashboard */
+  :root {
+    --admin-primary: #4A90E2;
+    --admin-success: #2ECC71;
+    --admin-danger: #E74C3C;
+    --bg-light: #f8f9fa;
+  }
+
+  body {
+    background-color: var(--bg-light);
+    font-family: 'Sarabun', sans-serif;
+    /* หรือฟอนต์ที่คุณใช้ */
+    margin: 0;
+  }
+
+  .admin-container {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Header Section */
+  .admin-header {
+    margin-bottom: 40px;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-title h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.8rem;
+  }
+
+  .header-title p {
+    margin: 5px 0 0;
+    color: #7f8c8d;
+  }
+
+  /* Stats Cards */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 50px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    border-left: 5px solid var(--admin-primary);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .stat-icon {
+    font-size: 3rem;
+    margin-right: 25px;
+    opacity: 0.8;
+  }
+
+  .stat-info h3 {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #2c3e50;
+    margin: 5px 0 0;
+  }
+
+  /* Quick Action Section */
+  .management-section {
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
+
+  .subsection-title {
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+  }
+
+  .action-btn {
+    padding: 15px 20px;
+    background-color: var(--admin-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .action-btn i {
+    font-size: 1.5rem;
+  }
+
+  .action-btn:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+  }
+
+  .action-btn.secondary {
+    background-color: var(--admin-success);
+  }
+
+  .action-btn.danger {
+    background-color: var(--admin-danger);
+  }
+
+  /* การ์ดสีแตกต่างตามประเภท */
+  .card-chem {
+    border-left-color: var(--admin-primary);
+  }
+
+  .card-group {
+    border-left-color: var(--admin-success);
+  }
+
+  .card-react {
+    border-left-color: #F1C40F;
+  }

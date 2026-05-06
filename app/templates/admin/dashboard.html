@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Chemistry System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- เรียกใช้ CSS เดิมของคุณ -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard.css') }}">
+</head>
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="app-wrapper">
+        <div class="admin-container">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-title">
+                    <h2><i class="fas fa-chart-line"></i> ระบบจัดการข้อมูลเคมี</h2>
+                    <p>จัดการฐานข้อมูล Functional Groups และ Reactions</p>
+                </div>
+                <div class="admin-profile">
+                    <span class="badge">ADMIN MODE</span>
+                </div>
+            </header>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card card-chem">
+                    <div class="stat-icon" style="color: var(--admin-primary);"><i class="fas fa-flask"></i></div>
+                    <div class="stat-info">
+                        <h3>สารเคมีทั้งหมด</h3>
+                        
+                    </div>
+                </div>
+                <div class="stat-card card-group">
+                    <div class="stat-icon" style="color: var(--admin-success);"><i class="fas fa-dna"></i></div>
+                    <div class="stat-info">
+                        <h3>หมู่ฟังก์ชัน</h3>
+                        
+                    </div>
+                </div>
+                <div class="stat-card card-react">
+                    <div class="stat-icon" style="color: #F1C40F;"><i class="fas fa-vial"></i></div>
+                    <div class="stat-info">
+                        <h3>ปฏิกิริยาเคมี</h3>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="management-section">
+                <h3 class="subsection-title"><i class="fas fa-tools"></i> แผงควบคุมการจัดการ</h3>
+                <div class="action-grid">
+                    <a href="" class="action-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>เพิ่มสารเคมี</span>
+                    </a>
+                    <a href="" class="action-btn secondary">
+                        <i class="fas fa-microscope"></i>
+                        <span>จัดการปฏิกิริยา</span>
+                    </a>
+                    <a href="#" class="action-btn" style="background-color: #8E44AD;">
+                        <i class="fas fa-layer-group"></i>
+                        <span>จัดการหมู่ฟังก์ชัน</span>
+                    </a>
+                    <a href="" class="action-btn danger">
+                        <i class="fas fa-user-shield"></i>
+                        <span>ตั้งค่าผู้ใช้</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ส่วนท้ายหน้า (ถ้ามี) -->
+</body>
+</html>

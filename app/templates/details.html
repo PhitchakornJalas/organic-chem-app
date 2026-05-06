@@ -74,7 +74,12 @@
           {% for c in chemicals %}
           <div class="example-card">
             <div class="card-img-box">
-              <img src="{{ url_for('static', filename='images/chemical/') }}" alt="{{ c.IUPAC }}">
+              {% if c.image %}
+              <img src="{{ url_for('static', filename='images/chemical/' + c.image) }}" alt="{{ c.IUPAC }}"
+                class="chem-img">
+              {% else %}
+              <img src="" alt="{{ c.IUPAC }}" class="chem-img">
+              {% endif %}
             </div>
             <div class="card-content">
               <h4 class="item-title">{{ c.IUPAC }}</h4>
