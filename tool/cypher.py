@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from werkzeug.security import generate_password_hash
 
 def chemical(file_name):
     base_path = os.path.dirname(os.path.abspath(__file__))
@@ -9,7 +10,7 @@ def chemical(file_name):
         print(f"❌ หาไฟล์ไม่เจอที่: {file_path}")
         return
 
-    df = pd.read_excel(file_path)
+    df = pd.read_excel(file_path, sheet_name='Chemical')
     
     df = df[df.iloc[:, 0] != 'IUPAC'] 
 
@@ -35,5 +36,70 @@ def chemical(file_name):
         print(f'MATCH (c:Chemical) WHERE c.IUPAC IN [{iupac_formatted}]<br>')
         print(f'CREATE (c)-[:TYPE_OF]->(f);<br>')
 
+def condition(file_name):
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_path, file_name)
+    
+    if not os.path.exists(file_path):
+        print(f"❌ หาไฟล์ไม่เจอที่: {file_path}")
+        return
+
+    df = pd.read_excel(file_path, sheet_name='Condition')
+    
+    df = df[df.iloc[:, 0] != 'name_en'] 
+
+    for index, row in df.iterrows():
+        name_en = row.iloc[0]
+        name_th = row.iloc[1]
+        symbol = row.iloc[2]
+
+        print(f"""(con{index}:Condition {{name_en: "{name_en}", name_th: "{name_th}", symbol: "{symbol}", createdAt: datetime({{timezone: '+07:00'}})}}),<br>""")
+
+def reaction(file_name):
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_path, file_name)
+    
+    if not os.path.exists(file_path):
+        print(f"❌ หาไฟล์ไม่เจอที่: {file_path}")
+        return
+
+    df = pd.read_excel(file_path, sheet_name='Reaction')
+    
+    df = df[df.iloc[:, 0] != 'name_en'] 
+
+    for index, row in df.iterrows():
+        name_en = row.iloc[0]
+        name_th = row.iloc[1]
+
+        print(f"""(r{index}:Reaction {{name_en: "{name_en}", name_th: "{name_th}", createdAt: datetime({{timezone: '+07:00'}})}}),<br>""")
+
+def user(file_name):
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_path, file_name)
+    
+    if not os.path.exists(file_path):
+        print(f"❌ หาไฟล์ไม่เจอที่: {file_path}")
+        return
+
+    df = pd.read_excel(file_path, sheet_name='User')
+    
+    df = df[df.iloc[:, 0] != 'username'] 
+
+    for index, row in df.iterrows():
+        username = row.iloc[0]
+        password = row.iloc[1]
+        role = row.iloc[2]
+        name = row.iloc[3]
+
+        print(f"""(u{index}:User {{username: "{username}", password: "{generate_password_hash(str(password))}", role: "{role}", name: "{name}", createdAt: datetime({{timezone: '+07:00'}})}}),<br>""")
+
+
 if __name__ == "__main__":
-    chemical('chem.xlsx')
+    print("============================== Chemical ==============================")
+    # chemical('chem.xlsx')
+    print("============================== Reaction ==============================")
+    reaction('chem.xlsx')
+    print("============================== Condition ==============================")
+    condition('chem.xlsx')
+    print("============================== User ==============================")
+    user('chem.xlsx')
