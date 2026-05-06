@@ -1,6 +1,9 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
+import uuid
+from datetime import datetime
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from neo4j import GraphDatabase
+from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
 
@@ -94,9 +97,68 @@ def search():
             flash("ไม่พบข้อมูลสารหรือสิ่งของที่คุณค้นหา", "error")
             return redirect(url_for('index'))
 
-@app.route('/login')
+def create_neo4j_session(username):
+    session_id = str(uuid.uuid4()) # สร้างไอดีสุ่ม
+    now = datetime.now().isoformat()
+    
+    with driver.session() as db_session:
+        # สร้างโหนด Session ใหม่ และเชื่อมกับ User
+        # status: "active" คือใช้งานได้
+        query = """
+        MATCH (u:User {username: $username})
+        CREATE (s:Session {
+            id: $session_id, 
+            status: "active", 
+            login_at: $now
+        })
+        CREATE (u)-[:HAS_SESSION]->(s)
+        RETURN s.id AS sid
+        """
+        db_session.run(query, username=username, session_id=session_id, now=now)
+    return session_id
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        with driver.session() as db_session:
+            # ดึงข้อมูล User มาตรวจสอบ (ดึง name มาด้วย)
+            result = db_session.run("MATCH (u:User {username: $u}) RETURN u", u=username)
+            user_record = result.single()
+
+            if user_record:
+                user_node = user_record['u']
+                # ตรวจสอบ Password ที่ Hash ไว้
+                if check_password_hash(user_node['password'], password):
+                    # จัดการชื่อ: ตัดเอาเฉพาะก้อนแรก
+                    full_name = user_node.get('name', username)
+                    first_name = full_name.split()[0] if full_name else username
+                    
+                    sid = create_neo4j_session(username)
+                    session['sid'] = sid
+                    session['user'] = first_name # เก็บเฉพาะชื่อหน้าใน Session
+                    return redirect(url_for('index'))
+            
+            flash("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "error")
     return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    sid = session.get('sid')
+    if sid:
+        with driver.session() as db_session:
+            # ค้นหาโหนด Session ตาม ID แล้วแก้สถานะเป็น expired
+            query = """
+            MATCH (s:Session {id: $sid})
+            SET s.status = "expired", s.logout_at = $now
+            """
+            db_session.run(query, sid=sid, now=datetime.now().isoformat())
+
+    # ล้าง Session ใน Browser
+    session.clear()
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     # host='0.0.0.0' สำคัญมากเพื่อให้เข้าถึงจากนอก Container ได้

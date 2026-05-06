@@ -141,3 +141,23 @@
     .nav-toggle.active .bar:nth-child(1) { transform: translateY(11px) rotate(45deg); }
     .nav-toggle.active .bar:nth-child(3) { transform: translateY(-11px) rotate(-45deg); }
 }
+
+/* ซ่อน nav-status-area บน Desktop */
+@media (min-width: 769px) {
+    .d-mobile-only {
+        display: none !important;
+    }
+}
+
+/* ตั้งค่าให้แสดงผลเฉพาะบน Mobile (ความกว้างน้อยกว่า 768px) */
+@media (max-width: 768px) {
+    .d-mobile-only {
+        display: flex; /* หรือ block ตามการจัดวางของคุณ */
+        align-items: center;
+    }
+    
+    /* ซ่อน auth ฝั่งขวาตัวเดิมของ Desktop เมื่ออยู่บนจอเล็ก */
+    .nav-right-desktop {
+        display: none;
+    }
+}

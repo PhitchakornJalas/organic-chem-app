@@ -15,10 +15,21 @@
 
         <!-- ฝั่งขวา: ปุ่ม Login สำหรับ Desktop -->
         <div class="nav-right-desktop">
-            {% if session.get('logged_in') %}
-                <a href="" class="nav-btn btn-logout">ออกจากระบบ</a>
+            {% if session.get('sid') %}
+            <span class="user-name" style="margin-right: 15px; color: var(--text-color); font-weight: 600;">
+                สวัสดี, {{ session.get('user') }}
+            </span>
+            <a href="{{ url_for('logout') }}" class="nav-btn btn-logout">ออกจากระบบ</a>
             {% else %}
-                <a href="{{ url_for('login') }}" class="nav-btn btn-login">เข้าสู่ระบบ</a>
+            <a href="{{ url_for('login') }}" class="nav-btn btn-login">เข้าสู่ระบบ</a>
+            {% endif %}
+        </div>
+
+        <div class="nav-status-area d-mobile-only" style="margin-left: auto; margin-right: 15px;">
+            {% if session.get('sid') %}
+            <span class="user-greeting-mobile" style="font-weight: 600; color: var(--text-color); font-size: 0.9rem;">
+                👋 {{ session.get('user') }}
+            </span>
             {% endif %}
         </div>
 
@@ -28,14 +39,14 @@
             <span class="bar"></span>
             <span class="bar"></span>
         </button>
-        
+
         <ul class="nav-menu-mobile" id="nav-menu-mobile">
             <li><a href="{{ url_for('index') }}" class="nav-link">หน้าหลัก</a></li>
             <li class="mobile-auth">
-                {% if session.get('logged_in') %}
-                    <a href="" class="nav-btn btn-logout">ออกจากระบบ</a>
+                {% if session.get('sid') %}
+                <a href="{{ url_for('logout') }}" class="nav-btn btn-logout">ออกจากระบบ</a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="nav-btn btn-login">เข้าสู่ระบบ</a>
+                <a href="{{ url_for('login') }}" class="nav-btn btn-login">เข้าสู่ระบบ</a>
                 {% endif %}
             </li>
         </ul>
