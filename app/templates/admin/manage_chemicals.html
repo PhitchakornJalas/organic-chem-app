@@ -7,6 +7,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- SweetAlert2 CSS & JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
 </head>
@@ -61,7 +63,9 @@
             <td><code>{{ chem.name_en }}</code></td>
             <td>
               <a href="#" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
-              <button class="btn-action btn-delete"><i class="fas fa-trash"></i></button>
+              <button class="btn-action btn-delete" onclick="confirmDelete('{{ chem.c_id }}', '{{ chem.IUPAC }}')">
+                <i class="fas fa-trash"></i>
+              </button>
             </td>
           </tr>
           {% endfor %}
@@ -103,6 +107,43 @@
       }
     });
   });
+</script>
+
+<script>
+  function confirmDelete(id, name) {
+    Swal.fire({
+      title: 'ยืนยันการลบข้อมูล?',
+      text: `คุณกำลังจะลบสาร "${name}" ออกจากระบบและไม่สามารถกู้คืนได้`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#E74C3C', // สีแดงตาม --admin-danger
+      cancelButtonColor: '#666',
+      confirmButtonText: 'ใช่, ลบเลย!',
+      cancelButtonText: 'ยกเลิก',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // ส่งคำขอไปยัง Backend
+        fetch(`/admin/delete-chemical/${id}`, { method: 'POST' })
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'success') {
+              Swal.fire({
+                title: 'ลบข้อมูลสำเร็จ!',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+              }).then(() => {
+                location.reload(); // โหลดหน้าใหม่เพื่ออัปเดตตาราง
+              });
+            }
+          })
+          .catch(err => {
+            Swal.fire('เกิดข้อผิดพลาด!', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
+          });
+      }
+    });
+  }
 </script>
 
 </html>

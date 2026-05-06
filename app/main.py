@@ -247,6 +247,15 @@ def manage_chemicals():
         
     return render_template('admin/manage_chemicals.html', chemicals=chemicals)
 
+# --- 3. ลบสารเคมี ---
+@app.route('/admin/delete-chemical/<id>', methods=['POST'])
+@admin_required
+def delete_chemical(id):
+    with driver.session() as session:
+        # DETACH DELETE เพื่อลบโหนดและความสัมพันธ์ทั้งหมดที่เชื่อมอยู่กับโหนดนี้
+        session.run("MATCH (c:Chemical) WHERE elementId(c) = $id DETACH DELETE c", id=id)
+    return jsonify({"status": "success"})
+
 # login & register
 
 @app.route('/register', methods=['GET', 'POST'])
