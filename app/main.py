@@ -99,37 +99,55 @@ def search():
 
 @app.route('/reactions')
 def reactions():
-    # Query ดึงหมวดหมู่หลัก และปฏิกิริยาย่อยทั้งหมด
     query = """
-    MATCH (r:Reaction)
-    WHERE NOT (r)-[:TYPE_OF]->()  // หาโหนดแม่ (ตัวที่ไม่ได้ไปเป็นลูกใคร)
-    OPTIONAL MATCH (sr:SubReaction)-[:TYPE_OF]->(r) // หาโหนดย่อยที่เชื่อมโยงมา
-    OPTIONAL MATCH (f:FunctionalGroup)-[:REACTANT_IN]->(sr)
-    OPTIONAL MATCH (con:Condition)-[:REQUIRED_FOR]->(sr)
+        MATCH (r:Reaction)
+        WHERE NOT (r)-[:TYPE_OF]->()  // หาหมวดหมู่หลัก
+        OPTIONAL MATCH (sr:SubReaction)-[:TYPE_OF]->(r) // หาปฏิกิริยาย่อย
+        
+        // 1. จัดการสารตั้งต้น (Reactants) - เรียงลำดับก่อน collect
+        OPTIONAL MATCH (f_rect:FunctionalGroup)-[:REACTANT_IN]->(sr)
+        OPTIONAL MATCH (c_rect:Chemical)-[:REACTANT_IN]->(sr)
+        WITH r, sr, f_rect, c_rect
+        ORDER BY elementId(f_rect) ASC, elementId(c_rect) ASC  // จัดเรียงตาม ID ของโหนด
+        WITH r, sr, 
+            collect(DISTINCT f_rect.name_en) + collect(DISTINCT c_rect.molecularFormula) AS reactants_list
 
-    ORDER BY elementId(f) ASC
+        // 2. จัดการผลิตภัณฑ์ (Products) - เรียงลำดับก่อน collect
+        OPTIONAL MATCH (sr)-[:MAIN_PRODUCT]->(f_prod:FunctionalGroup)
+        OPTIONAL MATCH (sr)-[:MAIN_PRODUCT]->(c_prod:Chemical)
+        OPTIONAL MATCH (sr)-[:BY_PRODUCT]->(cb_prod:Chemical)
+        WITH r, sr, reactants_list, f_prod, c_prod, cb_prod
+        ORDER BY elementId(f_prod) ASC, elementId(c_prod) DESC, elementId(cb_prod) ASC
+        WITH r, sr, reactants_list,
+            collect(DISTINCT f_prod.name_en) + 
+            collect(DISTINCT c_prod.molecularFormula) + 
+            collect(DISTINCT cb_prod.molecularFormula) AS products_list
 
-    RETURN 
-        r.id AS r_id,
-        r.name_en AS category_en,
-        r.name_th AS category_th,
-        collect({
-            sub_name: sr.name_en,
-            description: sr.description,
-            group_th: f.name_th,
-            group_en: f.name_en,
-            formula: f.molecularFormula,
-            condition: con.name_th,
-            symbol: con.symbol
-        }) AS sub_reactions
-    ORDER BY r_id ASC
+        // 3. ดึงเงื่อนไข
+        OPTIONAL MATCH (con:Condition)-[:REQUIRED_FOR]->(sr)
+
+        // 4. รวบรวมข้อมูลและจัดเรียงหมวดหมู่หลัก
+        RETURN 
+            elementId(r) AS r_id,
+            r.name_en AS category_en,
+            r.name_th AS category_th,
+            collect({
+                sub_name: sr.name_en,
+                description: sr.description,
+                reactants: reactants_list,
+                products: products_list,
+                condition_symbol: con.symbol,
+                condition_name: con.name_th
+            }) AS sub_reactions
+        ORDER BY r_id ASC
     """
+
     with driver.session() as session:
         result = session.run(query)
-        # จัดโครงสร้างข้อมูลให้เป็น List ของหมวดหมู่
         categories = [dict(record) for record in result]
         
     return render_template('reactions.html', categories=categories)
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
