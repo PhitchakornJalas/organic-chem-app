@@ -20,5 +20,11 @@ def chemical(file_name):
         
         print(f'(c{c_id}:Chemical {{IUPAC: "{IUPAC}", molecularFormula: "{molecularFormula}"}}),')
 
+    for index, row in df.iterrows():
+        c_id = row.iloc[0]
+        f_id = row.iloc[3]
+        
+        print(f'(c{c_id})-[:TYPE_OF]->(f{f_id}),')
+
 if __name__ == "__main__":
     chemical('chem.xlsx')
