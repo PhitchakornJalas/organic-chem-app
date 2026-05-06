@@ -18,7 +18,7 @@ def chemical(file_name):
         IUPAC = row.iloc[1]
         molecularFormula = row.iloc[2]
         
-        print(f'(c{c_id}:Chemical {{IUPAC: "{IUPAC}", molecularFormula: "{molecularFormula}"}}),')
+        print(f"""(c{c_id}:Chemical {{IUPAC: "{IUPAC}", molecularFormula: "{molecularFormula}", createdAt: datetime({{timezone: '+07:00'}})}}),""")
 
     for index, row in df.iterrows():
         c_id = row.iloc[0]
