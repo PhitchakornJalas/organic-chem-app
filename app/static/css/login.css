@@ -1,0 +1,130 @@
+/* -----------------------------------------------------------
+   Global Styles & Variables (Shared from style.css)
+   ----------------------------------------------------------- */
+:root {
+    --primary-color: #0077b6;
+    --accent-color: #00b4d8;
+    --text-color: #023e8a;
+    --glass-bg: rgba(255, 255, 255, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 119, 182, 0.15);
+    --body-bg: linear-gradient(135deg, #caf0f8 0%, #ade8f4 100%);
+    --body-font: 'Sarabun', sans-serif;
+}
+
+/* -----------------------------------------------------------
+   Body Setup (Adjusted for Navbar)
+   ----------------------------------------------------------- */
+body {
+    font-family: var(--body-font);
+    background: var(--body-bg);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column; /* เรียง Navbar และ Wrapper แนวตั้ง */
+    align-items: center;
+    justify-content: center;
+    padding-top: 80px; /* เว้นระยะจากขอบบนเพื่อไม่ให้ Navbar ทับเนื้อหา */
+    margin: 0;
+}
+
+/* -----------------------------------------------------------
+   Login Card (Glassmorphism Style)
+   ----------------------------------------------------------- */
+.login-wrapper {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 30px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    width: 90%;
+    max-width: 450px;
+    padding: 40px;
+    margin: 40px auto; /* จัดกึ่งกลางหน้าจอ */
+    text-align: center;
+}
+
+.login-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+/* -----------------------------------------------------------
+   Form Elements
+   ----------------------------------------------------------- */
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--text-color);
+    outline: none;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    background: white;
+    box-shadow: 0 0 8px rgba(0, 119, 182, 0.2);
+}
+
+/* -----------------------------------------------------------
+   Login Button
+   ----------------------------------------------------------- */
+.btn-login-form {
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 14px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 119, 182, 0.3);
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-login-form:hover {
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 119, 182, 0.4);
+}
+
+/* -----------------------------------------------------------
+   Footer Text
+   ----------------------------------------------------------- */
+.footer-text {
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.footer-text a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.footer-text a:hover {
+    color: var(--accent-color);
+}

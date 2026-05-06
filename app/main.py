@@ -94,6 +94,10 @@ def search():
             flash("ไม่พบข้อมูลสารหรือสิ่งของที่คุณค้นหา", "error")
             return redirect(url_for('index'))
 
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
 if __name__ == '__main__':
     # host='0.0.0.0' สำคัญมากเพื่อให้เข้าถึงจากนอก Container ได้
     app.run(host='0.0.0.0', port=5000, debug=True)
