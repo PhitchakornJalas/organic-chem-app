@@ -227,6 +227,26 @@ def manage_functional_groups():
         
     return render_template('admin/manage_functional_groups.html', groups=groups)
 
+@app.route('/admin/manage-chemicals')
+@admin_required
+def manage_chemicals():
+    with driver.session() as session:
+        # ดึงสารเคมี พร้อมชื่อหมู่ฟังก์ชันที่สังกัด
+        query = """
+        MATCH (c:Chemical)
+        OPTIONAL MATCH (c)-[:TYPE_OF]->(f:FunctionalGroup)
+        RETURN 
+            elementId(c) AS c_id,
+            c.IUPAC AS IUPAC,
+            c.molecularFormula AS molecularFormula,
+            f.name_en AS name_en
+        ORDER BY c.IUPAC ASC
+        """
+        results = session.run(query)
+        chemicals = [record for record in results]
+        
+    return render_template('admin/manage_chemicals.html', chemicals=chemicals)
+
 # login & register
 
 @app.route('/register', methods=['GET', 'POST'])
