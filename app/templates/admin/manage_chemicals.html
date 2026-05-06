@@ -5,9 +5,10 @@
   <meta charset="UTF-8">
   <title>จัดการสารเคมี | Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
 </head>
 
 <body>
@@ -32,7 +33,18 @@
         </a>
       </div>
 
-      <table class="admin-table">
+      <div class="table-controls">
+        <div>
+          <label>ตัวกรองหมู่ฟังก์ชัน:</label>
+          <select id="groupFilter" class="badge" style="padding: 8px; border: 1px solid #ddd;">
+            <option value="">ทั้งหมด</option>
+            <!-- <option value="ไม่ระบุ">ยังไม่ระบุหมู่ฟังก์ชัน</option> -->
+            <!-- ดึงรายการหมู่ฟังก์ชันมาใส่ที่นี่ -->
+          </select>
+        </div>
+      </div>
+
+      <table id="chemTable" class="admin-table display">
         <thead>
           <tr>
             <th>IUPAC</th>
@@ -58,5 +70,39 @@
     </div>
   </div>
 </body>
+
+<!-- เพิ่ม jQuery และ DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    // 1. เริ่มต้นการทำงานของตาราง
+    var table = $('#chemTable').DataTable({
+      "pageLength": 10,  // ตั้งค่า Max Row เริ่มต้นที่ 10 แถว
+      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "ทั้งหมด"]], // ตัวเลือกเปลี่ยนจำนวนแถว
+      "language": {
+        "search": "ค้นหาด่วน:",
+        "lengthMenu": "แสดง _MENU_ แถวต่อหน้า",
+        "info": "แสดงรายการที่ _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ",
+        "paginate": { "next": "ถัดไป", "previous": "ก่อนหน้า" }
+      }
+    });
+
+    // 2. ระบบ Filter ตามหมู่ฟังก์ชัน (ดึงค่าจากคอลัมน์ที่ 3 หรือ index 2)
+    $('#groupFilter').on('change', function () {
+      var val = $(this).val();
+      table.column(2).search(val).draw();
+    });
+
+    // 3. ดึงชื่อหมู่ฟังก์ชันที่มีอยู่ในตารางมาใส่ใน Select แบบอัตโนมัติ
+    table.column(2).data().unique().sort().each(function (d, j) {
+      var cleanName = $(d).text().trim();
+      if (cleanName && cleanName !== 'ไม่ระบุ') {
+        $('#groupFilter').append('<option value="' + cleanName + '">' + cleanName + '</option>');
+      }
+    });
+  });
+</script>
 
 </html>
