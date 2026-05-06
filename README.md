@@ -19,7 +19,6 @@ ChemGraph เป็นเว็บแอปพลิเคชันสำหร�
 
 ### 1. สิ่งที่ต้องมี (Prerequisites)
 *   ติดตั้ง [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-*   ติดตั้ง [Git](https://git-scm.com/)
 
 ### 2. ขั้นตอนการรันโปรเจกต์ (Step-by-Step)
 
