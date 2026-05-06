@@ -186,7 +186,46 @@ def admin_required(f):
 @app.route('/admin/dashboard')
 @admin_required
 def admin_dashboard():
-    return render_template('admin/dashboard.html')
+    with driver.session() as session:
+        # เพิ่มการนับโหนด Condition เข้าไปใน Query
+        res = session.run("""
+            MATCH (c:Chemical) WITH count(c) AS chem_c
+            MATCH (g:FunctionalGroup) WITH chem_c, count(g) AS group_c
+            MATCH (con:Condition) WITH chem_c, group_c, count(con) AS cond_c
+            MATCH (r:Reaction) WHERE NOT (r)-[:TYPE_OF]->() 
+            RETURN chem_c, group_c, cond_c, count(r) AS react_c
+        """).single()
+        
+        stats = {
+            'chemicals_count': res['chem_c'],
+            'groups_count': res['group_c'],
+            'conditions_count': res['cond_c'], # ส่งค่าตัวแปรใหม่ไปที่หน้า HTML
+            'reactions_count': res['react_c']
+        }
+        
+    return render_template('admin/dashboard.html', stats=stats)
+
+@app.route('/admin/manage-functional-groups')
+@admin_required
+def manage_functional_groups():
+    with driver.session() as session:
+        # ดึงข้อมูลหมู่ฟังก์ชันทั้งหมด พร้อมนับจำนวนสารเคมีที่สังกัดอยู่นั้นๆ
+        query = """
+        MATCH (f:FunctionalGroup)
+        OPTIONAL MATCH (c:Chemical)-[:TYPE_OF]->(f)
+        RETURN 
+            elementId(f) AS f_id,
+            f.name_en AS name_en,
+            f.name_th AS name_th,
+            f.groupName AS group_name,
+            f.molecularFormula AS formula,
+            count(c) AS chemical_count
+        ORDER BY f_id ASC
+        """
+        results = session.run(query)
+        groups = [record for record in results]
+        
+    return render_template('admin/manage_functional_groups.html', groups=groups)
 
 # login & register
 

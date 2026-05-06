@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- เรียกใช้ CSS เดิมของคุณ -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard.css') }}">
 </head>
 
@@ -37,25 +36,27 @@
                     <div class="stat-icon" style="color: var(--admin-primary);"><i class="fas fa-flask"></i></div>
                     <div class="stat-info">
                         <h3>สารเคมีทั้งหมด</h3>
-                        
+
                     </div>
                 </div>
 
                 <!-- 2. หมู่ฟังก์ชัน -->
-                <div class="stat-card card-group">
+                <a href="{{ url_for('manage_functional_groups') }}" class="stat-card card-group"
+                    style="text-decoration: none;">
                     <div class="stat-icon" style="color: var(--admin-success);"><i class="fas fa-dna"></i></div>
                     <div class="stat-info">
                         <h3>หมู่ฟังก์ชัน</h3>
-                        
+                        <p class="stat-number">{{ stats.groups_count }}</p>
+                        <small style="color: #666;">คลิกเพื่อจัดการข้อมูล</small>
                     </div>
-                </div>
+                </a>
 
                 <!-- 3. กล่องที่เพิ่มใหม่: ตัวเร่งปฏิกิริยา -->
                 <div class="stat-card card-condition" style="border-left-color: #9B59B6;">
                     <div class="stat-icon" style="color: #9B59B6;"><i class="fas fa-temperature-high"></i></div>
                     <div class="stat-info">
                         <h3>ตัวเร่ง / เงื่อนไข</h3>
-                        
+
                     </div>
                 </div>
 
@@ -64,7 +65,7 @@
                     <div class="stat-icon" style="color: #F1C40F;"><i class="fas fa-vial"></i></div>
                     <div class="stat-info">
                         <h3>ปฏิกิริยาเคมี</h3>
-                        
+
                     </div>
                 </div>
             </div>
