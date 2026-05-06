@@ -16,12 +16,18 @@ def chemical(file_name):
     for index, row in df.iterrows():
         IUPAC = row.iloc[0]
         molecularFormula = row.iloc[1]
+
+        if pd.isna(IUPAC) or str(IUPAC).strip().lower() == 'nan' or str(IUPAC).strip() == '':
+            continue
         
         print(f"""(c{index}:Chemical {{IUPAC: "{IUPAC}", molecularFormula: "{molecularFormula}", createdAt: datetime({{timezone: '+07:00'}})}}),<br>""")
 
     grouped = df.groupby(df.columns[2])
 
     for f_name, group in grouped:
+        if pd.isna(f_name) or str(f_name).strip().lower() == 'nan' or str(f_name).strip() == '':
+            continue
+
         iupac_list = group.iloc[:, 0].tolist()
         iupac_formatted = ", ".join([f'"{name}"' for name in iupac_list])
         
