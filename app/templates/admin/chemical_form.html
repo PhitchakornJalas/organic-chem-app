@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <title>จัดการสารเคมี | Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- SweetAlert2 CSS & JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
+</head>
+
+<body>
+  {% include 'navbar.html' %}
+
+  <div class="app-wrapper">
+    <div class="admin-container" style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+
+      <a href="{{ url_for('manage_chemicals') }}"
+        style="text-decoration: none; color: #666; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-arrow-left"></i> กลับไปหน้าจัดการ
+      </a>
+
+      <div class="admin-content-header" style="margin: 15px 0;">
+        <h2 class="admin-page-title">
+          <i class="fas {{ 'fa-edit' if chem else 'fa-plus-circle' }}"></i>
+          {{ 'แก้ไขข้อมูลสารเคมี' if chem else 'เพิ่มสารเคมีใหม่' }}
+        </h2>
+      </div>
+
+      <!-- ฟอร์มจะส่งไปที่ URL ปัจจุบันโดยอัตโนมัติ -->
+      <form action="" method="POST" class="management-section">
+
+        <div class="form-group">
+          <label>IUPAC Name:</label>
+          <input type="text" name="iupac" value="{{ chem.IUPAC if chem else '' }}" class="form-control"
+            placeholder="ระบุชื่อสาร..." required>
+        </div>
+
+        <div class="form-group">
+          <label>สูตรโมเลกุล:</label>
+          <input type="text" name="formula" value="{{ chem.molecularFormula if chem else '' }}" class="form-control"
+            placeholder="ระบุสูตร..." required>
+        </div>
+
+        <div class="form-group">
+          <label>หมู่ฟังก์ชัน:</label>
+          <select name="group_id" class="form-control" required>
+            <option value="">-- เลือกหมู่ฟังก์ชัน --</option>
+            <option value="" {% if not chem or not chem.group_id %}selected{% endif %}>ไม่มี</option>
+            {% for g in groups %}
+            <option value="{{ g.id }}" {% if chem and chem.group_id==g.id %}selected{% endif %}>
+              {{ g.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="btn-action btn-submit {{ 'btn-edit' if chem else 'btn-add' }}">
+          <i class="fas fa-save"></i>
+          {{ 'บันทึกการแก้ไข' if chem else 'ยืนยันการเพิ่มข้อมูล' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

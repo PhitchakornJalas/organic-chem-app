@@ -29,7 +29,7 @@
 
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <h2><i class="fas fa-flask"></i> รายการสารเคมีทั้งหมด</h2>
-        <a href="" class=""
+        <a href="{{ url_for('add_chemical') }}" class=""
           style="background: #2ECC71; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">
           <i class="fas fa-plus"></i> เพิ่มสารเคมีใหม่
         </a>
@@ -62,7 +62,7 @@
             <td><code>{{ chem.molecularFormula }}</code></td>
             <td><code>{{ chem.name_en }}</code></td>
             <td>
-              <a href="#" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
+              <a href="{{ url_for('edit_chemical', id=chem.c_id) }}" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
               <button class="btn-action btn-delete" onclick="confirmDelete('{{ chem.c_id }}', '{{ chem.IUPAC }}')">
                 <i class="fas fa-trash"></i>
               </button>
@@ -145,5 +145,27 @@
     });
   }
 </script>
+
+<!-- 1. ต้องมีไฟล์ Library ของ SweetAlert2 ก่อนเสมอ -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- 2. ส่วนดักฟัง Flash Messages จาก Python -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<script>
+  {% for category, message in messages %}
+  Swal.fire({
+    icon: "{{ 'success' if category == 'success' else 'error' }}",
+    title: "{{ message }}",
+    timer: 2000,
+    showConfirmButton: false,
+    // เพิ่ม Toast เพื่อให้ดูทันสมัยและไม่บังหน้าจอ
+    toast: true,
+    position: 'top-end'
+  });
+  {% endfor %}
+</script>
+{% endif %}
+{% endwith %}
 
 </html>

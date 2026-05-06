@@ -357,3 +357,63 @@ body {
     cursor: pointer;
     outline: none;
 }
+
+
+.form-control {
+    width: 100%;
+    /* เพิ่ม Padding แนวตั้งเป็น 18px เพื่อไม่ให้ตัวเลขตกขอบ */
+    padding: 18px 16px; 
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1.1rem;
+    /* เพิ่ม Line-height ให้ตัวอักษรมีพื้นที่แนวตั้งมากขึ้น */
+    line-height: 1.6; 
+    color: #334155;
+    transition: all 0.2s ease-in-out;
+    box-sizing: border-box;
+    /* ป้องกันไม่ให้ตัวอักษรเบียดกันเกินไป*/
+    display: block;
+}
+
+/* ปรับหัวข้อ Label ให้พอดีกับสายตา */
+.form-group label {
+    font-weight: 700;
+    display: block;
+    margin-bottom: 8px;
+    color: #1e293b;
+    font-size: 1.1rem; /* ขนาดใหญ่กว่าตัวเนื้อหาเล็กน้อยเพื่อให้แยกส่วนชัดเจน */
+}
+
+/* ปรับแต่ง Dropdown ให้เข้าพวก */
+select.form-control {
+    cursor: pointer;
+    background-color: #ffffff;
+}
+
+/* ปรับขนาดปุ่มให้ดูแน่นและมั่นคง */
+.btn-submit {
+    padding: 14px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border-radius: 10px;
+    margin-top: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+/* ปรับความกว้างของฟอร์มไม่ให้แผ่จนเกินไป */
+.management-section {
+    max-width: 850px; /* ขยายจาก 700px เป็น 850px เพื่อความสบายตา */
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}

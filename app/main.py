@@ -247,6 +247,96 @@ def manage_chemicals():
         
     return render_template('admin/manage_chemicals.html', chemicals=chemicals)
 
+# --- ฟังก์ชันช่วยดึงข้อมูลสำหรับ Form (Add/Edit) ---
+def get_form_context(session, id=None):
+    # ดึงรายชื่อหมู่ฟังก์ชันทั้งหมดเพื่อทำ Dropdown
+    groups = session.run("MATCH (f:FunctionalGroup) RETURN elementId(f) as id, f.name_en as name").data()
+    chem = None
+    if id:
+        # ดึงข้อมูลสารเคมีเดิมพร้อมชื่อหมู่ฟังก์ชันที่เชื่อมอยู่
+        query = """
+        MATCH (c:Chemical) WHERE elementId(c) = $id
+        OPTIONAL MATCH (c)-[:TYPE_OF]->(f:FunctionalGroup)
+        RETURN c, elementId(f) as current_group_id
+        """
+        record = session.run(query, id=id).single()
+        if record:
+            chem = record['c']
+            chem_data = dict(chem)
+            chem_data['group_id'] = record['current_group_id'] # เก็บ ID หมู่ฟังก์ชันปัจจุบันไว้เช็ค
+            return groups, chem_data
+    return groups, chem
+
+@app.route('/admin/add-chemical', methods=['GET', 'POST'])
+@admin_required
+def add_chemical():
+    with driver.session() as session:
+        if request.method == 'POST':
+            iupac = request.form.get('iupac')
+            formula = request.form.get('formula')
+            group_id = request.form.get('group_id') # อาจเป็นค่าว่างถ้าไม่ได้เลือก
+
+            # 1. สร้างโหนด Chemical เสมอ
+            create_chem_query = """
+            CREATE (c:Chemical {IUPAC: $iupac, molecularFormula: $formula})
+            RETURN elementId(c) as c_id
+            """
+            result = session.run(create_chem_query, iupac=iupac, formula=formula).single()
+            new_chem_id = result['c_id']
+
+            # 2. ถ้ามีการเลือกหมู่ฟังก์ชันมา ให้สร้างความสัมพันธ์ TYPE_OF
+            if group_id:
+                rel_query = """
+                MATCH (c:Chemical) WHERE elementId(c) = $c_id
+                MATCH (f:FunctionalGroup) WHERE elementId(f) = $group_id
+                CREATE (c)-[:TYPE_OF]->(f)
+                """
+                session.run(rel_query, c_id=new_chem_id, group_id=group_id)
+
+            flash("เพิ่มสารเคมีใหม่สำเร็จ!", "success")
+            return redirect(url_for('manage_chemicals'))
+        
+        groups, _ = get_form_context(session)
+    return render_template('admin/chemical_form.html', groups=groups, chem=None)
+
+@app.route('/admin/edit-chemical/<id>', methods=['GET', 'POST'])
+@admin_required
+def edit_chemical(id):
+    with driver.session() as session:
+        if request.method == 'POST':
+            iupac = request.form.get('iupac')
+            formula = request.form.get('formula')
+            group_id = request.form.get('group_id')
+            
+            # Logic การอัปเดตข้อมูล
+            update_query = """
+            MATCH (c:Chemical) WHERE elementId(c) = $id
+            SET c.IUPAC = $iupac, c.molecularFormula = $formula
+            OPTIONAL MATCH (c)-[r:TYPE_OF]->()
+            DELETE r
+            """
+            session.run(update_query, id=id, iupac=iupac, formula=formula)
+
+            if group_id:
+                rel_query = """
+                MATCH (c:Chemical) WHERE elementId(c) = $id
+                MATCH (f:FunctionalGroup) WHERE elementId(f) = $group_id
+                CREATE (c)-[:TYPE_OF]->(f)
+                """
+                session.run(rel_query, id=id, group_id=group_id)
+
+            flash("แก้ไขข้อมูลสารเคมีเรียบร้อย!", "success")
+            # ต้องมี return สำหรับกรณี POST
+            return redirect(url_for('manage_chemicals'))
+        
+        # สำหรับกรณี GET: ดึงข้อมูลมาแสดงผล
+        groups, chem = get_form_context(session, id)
+        if not chem:
+            return "ไม่พบข้อมูลสารเคมีนี้", 404
+        
+        # ต้องมี return สำหรับกรณี GET
+        return render_template('admin/chemical_form.html', groups=groups, chem=chem, c_id=id)
+
 # --- 3. ลบสารเคมี ---
 @app.route('/admin/delete-chemical/<id>', methods=['POST'])
 @admin_required
