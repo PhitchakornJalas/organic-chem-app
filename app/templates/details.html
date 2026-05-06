@@ -65,23 +65,23 @@
         </div>
       </div>
 
-      <h3 class="section-title">✨ สิ่งของในชีวิตประจำวัน</h3>
+      {% if chemicals %}
+      <h3 class="section-title">🧪 สารเคมีในหมู่ฟังก์ชัน</h3>
+      {% endif %}
 
       <div class="example-slider-container">
         <div class="example-slider-track">
-          {% for item in examples %}
+          {% for c in chemicals %}
           <div class="example-card">
             <div class="card-img-box">
-              <img src="{{ url_for('static', filename='images/items/' + item.image) }}" alt="{{ item.IUPAC }}">
+              <img src="{{ url_for('static', filename='images/chemical/') }}" alt="{{ c.IUPAC }}">
             </div>
             <div class="card-content">
-              <h4 class="item-title">{{ item.name_th }}</h4>
-              <h3 class="item-title">{{ item.IUPAC }}</h3>
-              <small>สูตรโมเลกุล: <span class="formula-tag"><span class="formula-render">{{ item.molecularFormula
-                    }}</span></span></small>
-              <p class="item-usage">Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore dicta quae
+              <h4 class="item-title">{{ c.IUPAC }}</h4>
+              <small>สูตรโมเลกุล: <span class="formula-tag">{{ c.molecularFormula}}</span></small>
+              <!-- <p class="item-usage">Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore dicta quae
                 reiciendis blanditiis autem quod voluptatum placeat repellendus repudiandae, eum explicabo nemo numquam
-                ad quo est quis incidunt cum dolorum.</p>
+                ad quo est quis incidunt cum dolorum.</p> -->
             </div>
           </div>
           {% endfor %}

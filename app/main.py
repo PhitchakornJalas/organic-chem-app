@@ -33,11 +33,22 @@ def index():
         functional_groups = [record.data() for record in results]
 
     with driver.session() as session:
+
         query = """
-        MATCH (f:FunctionalGroup)
-        OPTIONAL MATCH (i:Items)-[:FUNCTIONALGROUP_IS]->(f)
-        RETURN collect(distinct f.name_en) + collect(distinct f.name_th) + 
-            collect(distinct f.groupName) + collect(distinct i.name_th) AS all_names
+            MATCH (f:FunctionalGroup)
+            
+            // ดึงสิ่งของที่เกี่ยวข้อง
+            OPTIONAL MATCH (i:Items)-[:FUNCTIONALGROUP_IS]->(f)
+            
+            // ดึงสารเคมีที่มีความสัมพันธ์แบบ TYPE_OF กับหมู่ฟังก์ชัน
+            OPTIONAL MATCH (c:Chemical)-[:TYPE_OF]->(f)
+            
+            RETURN 
+                collect(distinct f.name_en) + 
+                collect(distinct f.name_th) + 
+                collect(distinct f.groupName) + 
+                collect(distinct i.name_th) + 
+                collect(distinct c.IUPAC) AS all_names
         """
 
         names = session.run(query).single()['all_names']
@@ -52,7 +63,8 @@ def details(group_name):
         query = """
         MATCH (f:FunctionalGroup {name_en: $name})
         OPTIONAL MATCH (i:Items)-[:FUNCTIONALGROUP_IS]->(f)
-        RETURN f, collect(i) AS examples
+        OPTIONAL MATCH (c:Chemical)-[:TYPE_OF]->(f)
+        RETURN f, collect(i) AS examples, collect(DISTINCT c) AS chemicals
         """
         result = session.run(query, name=group_name).single()
         
@@ -61,8 +73,9 @@ def details(group_name):
             
         group_data = result['f']
         examples = result['examples']
+        chemicals = result['chemicals']
         
-    return render_template('details.html', group=group_data, examples=examples)
+    return render_template('details.html', group=group_data, examples=examples, chemicals=chemicals)
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -73,19 +86,28 @@ def search():
     
     with driver.session() as session:
         query = """
-        MATCH (f:FunctionalGroup)
-        WHERE toLower(trim(f.name_en)) = toLower(trim($q))
-        OR toLower(trim(f.name_th)) = toLower(trim($q))
-        OR toLower(trim(f.groupName)) = toLower(trim($q))
-        RETURN f.name_en AS name_en
+            // 1. ค้นหาจากชื่อหมู่ฟังก์ชันโดยตรง
+            MATCH (f:FunctionalGroup)
+            WHERE toLower(trim(f.name_en)) = toLower(trim($q))
+            OR toLower(trim(f.name_th)) = toLower(trim($q))
+            OR toLower(trim(f.groupName)) = toLower(trim($q))
+            RETURN f.name_en AS name_en
 
-        UNION
+            UNION
 
-        MATCH (i:Items)-[:FUNCTIONALGROUP_IS]->(f:FunctionalGroup)
-        WHERE toLower(trim(i.name_th)) = toLower(trim($q))
-        RETURN f.name_en AS name_en
+            // 2. ค้นหาจากชื่อสิ่งของ แล้ว Map ไปหาหมู่ฟังก์ชัน
+            MATCH (i:Items)-[:FUNCTIONALGROUP_IS]->(f:FunctionalGroup)
+            WHERE toLower(trim(i.name_th)) = toLower(trim($q))
+            RETURN f.name_en AS name_en
 
-        LIMIT 1
+            UNION
+
+            // 3. ค้นหาจากชื่อสารเคมี (Chemical) แล้ว Map ไปหาหมู่ฟังก์ชัน (TYPE_OF)
+            MATCH (c:Chemical)-[:TYPE_OF]->(f:FunctionalGroup)
+            WHERE toLower(trim(c.IUPAC)) = toLower(trim($q))
+            RETURN f.name_en AS name_en
+
+            LIMIT 1
         """
 
         result = session.run(query, q=search_text).single()
